@@ -5,10 +5,13 @@ import be.ucll.model.User;
 import be.ucll.service.LoanService;
 import be.ucll.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -23,22 +26,22 @@ public class UserRestController {
         this.loanService = loanService;
     }
 
-    @GetMapping("/all")
+    @GetMapping("/all")  //http://localhost:8080/users/all
     public List<User> getAllUsers(){
         return userService.getAllUsers();
     }
 
-    @GetMapping("/adults")
+    @GetMapping("/adults") //http://localhost:8080/users/adults
     public List<User> getAllAdultUsers(){
         return userService.getAllAdultUsers();
     }
 
-    @GetMapping("/age/{min}/{max}")
+    @GetMapping("/age/{min}/{max}") //http://localhost:8080/users/age/4/10
     public List<User> getUsersbetweenAges(@PathVariable int min,@PathVariable int max){
         return userService.getUsersBetweenAges(min,max);
     }
 
-    @GetMapping
+    @GetMapping // http://localhost:8080/users?name=doe
     public List<User> getUsers(@RequestParam(required = false) String name) {
         if (name == null || name.isEmpty()) {
             return userService.getAllUsers();
@@ -47,7 +50,7 @@ public class UserRestController {
     }
 
     // i donot know the use of responce entity from my research its for custom headers and returnintg different status codes and error messages
-    @GetMapping("/{email}/loans")
+    @GetMapping("/{email}/loans")  // http://localhost:8080/users/jane.toe@ucll.be/loans?onlyActive=true
     public ResponseEntity<List<Loan>> getLoansForUser(@PathVariable String email, @RequestParam(required = false) boolean onlyActive) {
         List<Loan> loans = loanService.getLoansByUser(email, onlyActive);
         if (loans.isEmpty()) {
@@ -74,6 +77,16 @@ public class UserRestController {
     public String deleteUser(@PathVariable String email){
         return userService.deleteUser(email);
     }
+
+    // Story 19
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({RuntimeException.class})
+    public Map<String,String> handleRuntimeException(RuntimeException ex){
+       Map<String,String> errors = new HashMap<>();
+       errors.put("error: ",ex.getMessage());
+       return errors;
+    }
+
 
 
 
