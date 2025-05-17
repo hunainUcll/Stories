@@ -1,11 +1,26 @@
 package be.ucll.model;
 
+import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.Length;
+
 public class User {
 
+    @NotBlank(message = "Name is required.")
+    // so when i use min and max the violation size becomes greater and greater ex - for 3 input validation expected violation size was 1 but i got 5
+    // answer - that happens because apparently i wasnt supposed touse the above annotations on a string instead use @Length
+    @Length(min = 4,max = 25,message = "Name must be in between 4 and 25 characters long")
     private String name;
-    private String password;
-    private String email;
+
+    @PositiveOrZero(message = "age cannot be under 0")
+    @Max(value = 101,message = "age cannot be over 101")
     private int age;
+
+    @Email(message = "the email does not contain @ symbol." )
+    private String email;
+
+    @Length(min = 8 ,message = "Password must be at least 8 characters long.")
+    @Length(max = 25,message = "Password must not be more than 25 characters long.")
+    private String password;
 
     public User(String name, int age, String email, String password) {
         setName(name);
@@ -17,56 +32,28 @@ public class User {
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new RuntimeException("Name is required.");
-        }
-        this.name = name;
-    }
-
+    public void setName(String name) {this.name = name;}
 
     public int getAge() {
         return age;
     }
-
-    public void setAge(int age) {
-        if(age > 0 && age < 101){this.age = age;}
-        else{throw new RuntimeException("Invalid age");}
-    }
+    public void setAge(int age) {this.age = age;}
 
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
-        if(email.contains("@")&& email.contains(".")){
-            this.email = email;
+        if(email.contains(".")){this.email = email;}
+        else{throw new RuntimeException("Email must contain . symbol.");}
         }
-        else {
-            throw new RuntimeException("The email is invalid");
-        }
-
-    }
 
     public String getPassword() {
         return password;
     }
-
-    public void setPassword(String password) {
-        if(password.length() < 8){
-            throw new RuntimeException("Password must be at least 8 characters long.");
-        }
-        else {
-            this.password = password;
-        }
-
-    }
+    public void setPassword(String password) {this.password = password;}
 
     public void updateUser(String name, int age, String email, String password) {
-        if(!email.equals(this.email)){
-            throw new RuntimeException("Email cannot be changed.");
-        }
+        if(!email.equals(this.email)){throw new RuntimeException("Email cannot be changed.");}
         this.name =name;
         this.age = age;
         this.password = password;

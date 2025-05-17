@@ -1,7 +1,12 @@
 package be.ucll.model;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class Book extends Publication {
+
+    @NotBlank(message = "author is required.")
     private String author;
+    @NotBlank(message = "ISBN is required.")
     private String ISBN;
 
     public Book(String title, String author, String ISBN, int publicationYear, int availableCopies) {
@@ -13,24 +18,14 @@ public class Book extends Publication {
     public String getAuthor() {
         return author;
     }
-
-    public void setAuthor(String author) {
-        if (author == null || author.trim().isEmpty()) {
-            throw new RuntimeException("author is required.");
-        }
-        this.author = author;
-    }
+    public void setAuthor(String author) {this.author = author;}
 
     public String getISBN() {
         return ISBN;
     }
 
     public void setISBN(String ISBN) {
-        if (ISBN == null || ISBN.trim().isEmpty()) {
-            throw new RuntimeException("ISBN is required.");
-        } else if (!ISBN.matches("^\\d{3}-\\d{1,5}-\\d{1,7}-\\d{1,7}-\\d$")) {
-            throw new RuntimeException("ISBN has wrong format");
-        }
+        if (!ISBN.matches("^\\d{3}-\\d{1,5}-\\d{1,7}-\\d{1,7}-\\d$")) {throw new RuntimeException("ISBN has wrong format");}
         this.ISBN = ISBN;
     }
 }

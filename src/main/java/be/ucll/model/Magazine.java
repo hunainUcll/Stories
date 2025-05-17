@@ -1,7 +1,12 @@
 package be.ucll.model;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class Magazine extends Publication {
+
+    @NotBlank(message = "editor is required.")
     private String editor;
+    @NotBlank(message = "ISSN is required.")
     private String ISSN;
 
     public Magazine(String title, String editor, String ISSN, int publicationYear, int availableCopies) {
@@ -14,23 +19,14 @@ public class Magazine extends Publication {
         return editor;
     }
 
-    public void setEditor(String editor) {
-        if (editor == null || editor.trim().isEmpty()) {
-            throw new RuntimeException("editor is required.");
-        }
-        this.editor = editor;
-    }
+    public void setEditor(String editor) {this.editor = editor;}
 
     public String getISSN() {
         return ISSN;
     }
 
     public void setISSN(String ISSN) {
-        if (ISSN == null || ISSN.trim().isEmpty()) {
-            throw new RuntimeException("ISSN is required.");
-        } else if (!ISSN.matches("^\\d{4}-\\d{4}$")) {
-            throw new RuntimeException("ISSN has wrong format");
-        }
+        if (!ISSN.matches("^\\d{4}-\\d{4}$")) {throw new RuntimeException("ISSN has wrong format");}
         this.ISSN = ISSN;
     }
 }

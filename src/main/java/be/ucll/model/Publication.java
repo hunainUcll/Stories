@@ -1,11 +1,16 @@
 package be.ucll.model;
 
-import java.util.Calendar;
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public abstract class Publication {
+    @NotBlank(message = "title is required.")
     private String title;
+
+    @Min(value = 1,message = "year cannot be 0 or negative")
     private int publicationYear;
+
+    @PositiveOrZero(message = "Available copies must not be a negative number.")
     private int availableCopies;
 
     public Publication(String title, int publicationYear, int availableCopies) {
@@ -17,13 +22,7 @@ public abstract class Publication {
     public String getTitle() {
         return title;
     }
-
-    public void setTitle(String title) {
-        if (title == null || title.trim().isEmpty()) {
-            throw new RuntimeException("title is required.");
-        }
-        this.title = title;
-    }
+    public void setTitle(String title) {this.title = title;}
 
     public int getPublicationYear() {
         return publicationYear;
@@ -31,29 +30,18 @@ public abstract class Publication {
 
     public void setPublicationYear(int publicationYear) {
         int currentYear = LocalDate.now().getYear();
-        if (publicationYear <= 0) {
-            throw new RuntimeException("Publication year must be a positive integer.");
-        } else if (publicationYear > currentYear) {
-            throw new RuntimeException("Publication year cannot be in the future.");
-        }
+        if (publicationYear > currentYear) {throw new RuntimeException("Publication year cannot be in the future.");}
         this.publicationYear = publicationYear;
     }
 
     public int getAvailableCopies() {
         return availableCopies;
     }
-
-    public void setAvailableCopies(int availableCopies) {
-        if (availableCopies < 0) {
-            throw new RuntimeException("Available copies must be a positive number.");
-        }
-        this.availableCopies = availableCopies;
-    }
+    public void setAvailableCopies(int availableCopies) {this.availableCopies = availableCopies;}
 
     public void lendPublications(){
-        if (availableCopies < 0){
-            throw new RuntimeException("No more copies available");
-        }
+        //possible error here so test the loan and we might have to remove this check later on
+        if (availableCopies < 0){throw new RuntimeException("No more copies available");}
         this.availableCopies --;
     }
 

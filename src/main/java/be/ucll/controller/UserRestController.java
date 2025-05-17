@@ -4,9 +4,12 @@ import be.ucll.model.Loan;
 import be.ucll.model.User;
 import be.ucll.service.LoanService;
 import be.ucll.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -60,12 +63,12 @@ public class UserRestController {
     }
 
     @PostMapping
-    public User registerUser(@RequestBody User user){
+    public User registerUser(@Valid @RequestBody User user){
         return userService.registerUser(user);
     }
 
     @PutMapping("/{email}")
-    public User updateUser(@RequestBody User user, @PathVariable String email){
+    public User updateUser(@Valid @RequestBody User user, @PathVariable String email){
         return userService.updateUser(user,email);
     }
 
@@ -86,6 +89,21 @@ public class UserRestController {
        errors.put("error: ",ex.getMessage());
        return errors;
     }
+
+    // story 20 only the exception handler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public Map<String, String> handleValidationException(MethodArgumentNotValidException ex){
+        Map<String,String> errors = new HashMap<>();
+        for(FieldError error : ex.getFieldErrors()){
+            String fieldName = error.getField();
+            String fieldError = error.getDefaultMessage();
+            errors.put(fieldName,fieldError);
+        }
+        return errors;
+    }
+
+
 
 
 
