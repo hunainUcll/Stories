@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,13 +110,24 @@ public class BookTest {
         assertEquals("author is required.", violations.iterator().next().getMessage());
     }
 
+    // this is a very annoying problem
+    // here i had to use AI because i had 2 error messages and iterator only returned one message even tho this test triggered 2 violations $
+    // so ai suggested me to collect all the errors in a list and check for teh errors i was expecting to be in this list
     @Test
     void givenEmptyISBN_whenValidatingBook_thenValidationFails() {
         Book book = new Book("Harry Potter", "J.K. Rowling", "", 2001, 5);
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
-        assertEquals(1, violations.size());
-        assertEquals("ISBN is required.", violations.iterator().next().getMessage());
+
+        assertEquals(2, violations.size());
+
+        List<String> messages = violations.stream()
+                .map(ConstraintViolation::getMessage)
+                .toList();
+
+        assertTrue(messages.contains("ISBN is required."));
+        assertTrue(messages.contains("ISBN has wrong format"));
     }
+
 
     @Test
     void givenNullISBN_whenValidatingBook_thenValidationFails() {
@@ -127,9 +139,10 @@ public class BookTest {
 
     @Test
     void givenWrongISBNFormat_whenCreatingBook_thenThrowsRuntimeException() {
-        Exception exception = assertThrows(RuntimeException.class, () ->
-                new Book("Harry Potter", "J.K. Rowling", "123456789", 2001, 5));
-        assertEquals("ISBN has wrong format", exception.getMessage());
+        Book book = new Book("Harry Potter", "J.K. Rowling", "123456789", 2001, 5);
+        Set<ConstraintViolation<Book>> violations = validator.validate(book);
+        assertEquals(1,violations.size());
+        assertEquals("ISBN has wrong format", violations.iterator().next().getMessage());
     }
 
     @Test

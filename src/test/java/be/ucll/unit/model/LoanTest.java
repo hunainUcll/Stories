@@ -1,12 +1,20 @@
 package be.ucll.unit.model;
 
 import be.ucll.model.*;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoanTest {
@@ -16,6 +24,9 @@ public class LoanTest {
     private Magazine validMagazine;
     private ArrayList<Publication> publications;
     private Loan loan;
+
+    private static ValidatorFactory validatorFactory;
+    private static Validator validator;
 
 
 
@@ -28,6 +39,18 @@ public class LoanTest {
          publications.add(validBook);
          publications.add(validMagazine);
     }
+
+    @BeforeAll
+    static void setupValidatorFactory() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
+    @AfterAll
+    static void closeValidatorFactory() {
+        validatorFactory.close();
+    }
+
 
     @Test
     void givenValidPublications_whenCreatingLoan_thenLoanHasExpectedValues() {
@@ -55,11 +78,12 @@ public class LoanTest {
 
     @Test
     void givenNullUser_whenCreatingLoan_thenThrowsException() {
-        Exception exception = assertThrows(RuntimeException.class,
-                () -> new Loan(null, publications, LocalDate.now()));
-
-        assertEquals("User is required.", exception.getMessage());
+        Loan loan =  new Loan(null, publications, LocalDate.now());
+        Set<ConstraintViolation<Loan>> violations = validator.validate(loan);
+        assertEquals(1, violations.size());
+        assertEquals("User is required", violations.iterator().next().getMessage());
     }
+
 
     @Test
     void givenNullPublicationsList_whenCreatingLoan_thenThrowsException() {
@@ -79,19 +103,19 @@ public class LoanTest {
 
     @Test
     void givenNullStartDate_whenCreatingLoan_thenThrowsException() {
-        Exception exception = assertThrows(RuntimeException.class,
-                () -> new Loan(validUser, publications, null));
-
-        assertEquals("Start date is required.", exception.getMessage());
+        Loan loan =  new Loan(validUser, publications, null);
+        Set<ConstraintViolation<Loan>> violations = validator.validate(loan);
+        assertEquals(1, violations.size());
+        assertEquals("Start date is required.", violations.iterator().next().getMessage());
     }
 
     @Test
     void givenFutureStartDate_whenCreatingLoan_thenThrowsException() {
         LocalDate futureDate = LocalDate.now().plusDays(1);
-        Exception exception = assertThrows(RuntimeException.class,
-                () -> new Loan(validUser, publications, futureDate));
-
-        assertEquals("Start date cannot be in the future.", exception.getMessage());
+        Loan loan =  new Loan(validUser, publications, futureDate);
+        Set<ConstraintViolation<Loan>> violations = validator.validate(loan);
+        assertEquals(1, violations.size());
+        assertEquals("Start date cannot be in the future", violations.iterator().next().getMessage());
     }
 
     @Test

@@ -1,33 +1,41 @@
 package be.ucll.model;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+
 import java.time.LocalDate;
 import java.util.List;
 
 public class Loan {
 
+    @NotNull(message = "User is required")
     private User user;
+
     private List<Publication> publications;
+
+    @NotNull(message = "Start date is required.")
+    @PastOrPresent(message = "Start date cannot be in the future")
     private LocalDate startDate;
+
+
     private LocalDate endDate;
+
     private Boolean isReturned;
 
     public Loan(User user, List<Publication> publications, LocalDate startDate) {
         setUser(user);
         setStartDate(startDate);
         setPublications(publications);
-        this.endDate = startDate.plusDays(21);
+        // Only compute endDate if startDate is not null
+        if (startDate != null) {
+            this.endDate = startDate.plusDays(21);
+        }
     }
 
     public User getUser() {
         return user;
     }
-
-    public void setUser(User user) {
-        if(user == null){
-            throw new RuntimeException("User is required.");
-        }
-        this.user = user;
-    }
+    public void setUser(User user) {this.user = user;}
 
     public LocalDate getEndDate() {
         return endDate;
@@ -36,24 +44,11 @@ public class Loan {
     public LocalDate getStartDate() {
         return startDate;
     }
-
-    public void setStartDate(LocalDate startDate) {
-
-        if(startDate==null){
-            throw new RuntimeException("Start date is required.");
-        }
-        if(startDate.isAfter(LocalDate.now())){
-            throw new RuntimeException("Start date cannot be in the future.");
-        }
-        this.startDate = startDate;
-    }
+    public void setStartDate(LocalDate startDate) {this.startDate = startDate;}
 
     public List<Publication> getPublications() {
         return publications;
     }
-
-
-
     public void setPublications(List<Publication> publications) {
         if (publications == null || publications.isEmpty()) {
             throw new RuntimeException("List is required.");
