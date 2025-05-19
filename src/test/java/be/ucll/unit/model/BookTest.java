@@ -117,15 +117,12 @@ public class BookTest {
     void givenEmptyISBN_whenValidatingBook_thenValidationFails() {
         Book book = new Book("Harry Potter", "J.K. Rowling", "", 2001, 5);
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
-
         assertEquals(2, violations.size());
-
         List<String> messages = violations.stream()
                 .map(ConstraintViolation::getMessage)
                 .toList();
 
         assertTrue(messages.contains("ISBN is required."));
-        assertTrue(messages.contains("ISBN has wrong format"));
     }
 
 

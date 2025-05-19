@@ -1,15 +1,25 @@
 package be.ucll.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
+@Entity
+@Table(name = "users")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    protected User(){}
+
 
     @NotBlank(message = "Name is required.")
     // so when i use min and max the violation size becomes greater and greater ex - for 3 input validation expected violation size was 1 but i got 5
     // answer - that happens because apparently i wasnt supposed touse the above annotations on a string instead use @Length
     @Length(min = 4,max = 25,message = "Name must be in between 4 and 25 characters long")
-    private String name;
+    private String name; 
 
     @PositiveOrZero(message = "age cannot be under 0")
     @Max(value = 101,message = "age cannot be over 101")

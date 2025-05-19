@@ -13,8 +13,8 @@ public class LoanRepository {
     private final List<Loan> loans;
 
     public LoanRepository(UserRepository userRepo, PublicationRepository pubRepo) {
-        User user1 = userRepo.allUsers().get(0); // 21Savage
-        User user2 = userRepo.allUsers().get(1); // Jane Toe
+        User user1 = userRepo.findAll().get(0); // 21Savage
+        User user2 = userRepo.findAll().get(1); // Jane Toe
 
         List<Publication> publications1 = new ArrayList<>();
         publications1.add(pubRepo.getAllPublications().get(0)); // Harry Potter

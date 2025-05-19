@@ -18,7 +18,7 @@ public class LoanService {
     }
 
     public List<Loan> getLoansByUser(String email, boolean onlyActive) {
-        if (!userRepo.userExists(email)) {
+        if (!userRepo.existsUserByEmail(email)) {
             throw new RuntimeException("User not found with given email");  // Handle if user not found basically service is to check if everything is fein
         }
         // Fetch loans by user and filter based on active status
@@ -26,7 +26,7 @@ public class LoanService {
     }
 
     public String deleteUserLoans(String email) {
-        if (!userRepo.userExists(email)) {
+        if (!userRepo.existsUserByEmail(email)) {
             throw new RuntimeException("User does not exist");
         }
         List<Loan> activeLoans = loanRepository.findLoanByUser(email, true);
