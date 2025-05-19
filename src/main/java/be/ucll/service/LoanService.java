@@ -9,8 +9,8 @@ import java.util.List;
 
 @Service
 public class LoanService {
-    private final LoanRepository loanRepository;
-    private final UserRepository userRepo;
+    private  LoanRepository loanRepository;
+    private  UserRepository userRepo;
 
     public LoanService(LoanRepository loanRepository, UserRepository userRepo) {
         this.loanRepository = loanRepository;

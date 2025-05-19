@@ -1,19 +1,23 @@
 package be.ucll.integration;
 
 import be.ucll.LibraryApplication;
+import be.ucll.repository.DbInitializer;
 import be.ucll.repository.UserRepository;
 import be.ucll.service.UserService;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = LibraryApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
+@Sql("classpath:schema.sql")
 public class UserIntegrationTest {
 
     @Autowired
@@ -25,9 +29,11 @@ public class UserIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    @AfterEach
-    public void resetData() {
-        userRepository.resetRepositoryData(); // Resets the in-memory list
+    @Autowired
+    private DbInitializer dbInitializer;
+    @BeforeEach
+    public void setup() {
+        dbInitializer.initialize();
     }
 
     @Test

@@ -5,6 +5,7 @@ import be.ucll.repository.LoanRepository;
 import be.ucll.repository.PublicationRepository;
 import be.ucll.repository.UserRepository;
 import be.ucll.service.UserService;
+import be.ucll.unit.repository.UserRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,9 +21,9 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserRepository userRepository = new UserRepository();
+        UserRepository userRepository = new UserRepositoryStub();
         PublicationRepository publicationRepository = new PublicationRepository();
-        LoanRepository loanRepository = new LoanRepository(userRepository,publicationRepository);
+        LoanRepository loanRepository = new LoanRepository();
         userService = new UserService(userRepository,loanRepository);
     }
 
@@ -114,8 +115,8 @@ public class UserServiceTest {
         User existingUser = new User("John Doe", 30, email, "password123");
         User updatedData = new User("Johnny Doe", 31, email, "newpassword123");
 
-        when(userRepository.userExists(email)).thenReturn(true);
-        when(userRepository.findUsersByEmail(email)).thenReturn(existingUser);
+        when(userRepository.existsUserByEmail(email)).thenReturn(true);
+        when(userRepository.findUserByEmail(email)).thenReturn(existingUser);
 
         // When
         User updatedUser = userService.updateUser(updatedData, email);
@@ -126,8 +127,8 @@ public class UserServiceTest {
         assertEquals("newpassword123", updatedUser.getPassword());
         assertEquals(email, updatedUser.getEmail()); // Email remains unchanged
 
-        verify(userRepository).userExists(email);
-        verify(userRepository).findUsersByEmail(email);
+        verify(userRepository).existsUserByEmail(email);
+        verify(userRepository).findUserByEmail(email);
     }
 
     // STORY 16 happy test
@@ -153,14 +154,14 @@ public class UserServiceTest {
     @Test
     void givenNoAdults_whenGettingAllAdults_thenReturnsEmptyList() {
         // Custom user repo with no adult users
-        UserRepository userRepository = new UserRepository() {
+        UserRepository userRepository = new UserRepositoryStub() {
             @Override
-            public List<User> usersOlderThan(int age) {
+            public List<User> findUsersByAgeAfter(int age) {
                 return List.of();
             }
         };
         PublicationRepository publicationRepository = new PublicationRepository();
-        LoanRepository loanRepository = new LoanRepository(userRepository, publicationRepository);
+        LoanRepository loanRepository = new LoanRepository();
         UserService userService = new UserService(userRepository, loanRepository);
 
         List<User> adults = userService.getAllAdultUsers();
@@ -172,13 +173,13 @@ public class UserServiceTest {
     // ❌ No users in given age range
     @Test
     void givenNoMatchingUsers_whenGettingWithinAgeRange_thenReturnsEmptyList() {
-        UserRepository userRepository = new UserRepository() {
+        UserRepository userRepository = new UserRepositoryStub() {
             public List<User> usersWithinAgeRange(int min, int max) {
                 return List.of();
             }
         };
         PublicationRepository publicationRepository = new PublicationRepository();
-        LoanRepository loanRepository = new LoanRepository(userRepository, publicationRepository);
+        LoanRepository loanRepository = new LoanRepository();
         UserService userService = new UserService(userRepository, loanRepository);
 
         List<User> users = userService.getUsersBetweenAges(100, 150);

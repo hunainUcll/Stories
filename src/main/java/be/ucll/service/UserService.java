@@ -29,7 +29,7 @@ public class UserService {
     }
 
     public List<User> getAllAdultUsers() {
-        return userRepository.findUsersByAgeAfter(18);
+        return userRepository.findUsersByAgeAfter(17);
     }
 
     public List<User> getUsersBetweenAges(int min, int max) {
@@ -69,6 +69,7 @@ public class UserService {
 
         User updateduser = userRepository.findUserByEmail(email);
         updateduser.updateUser(user.getName(),user.getAge(),user.getEmail(),user.getPassword());
+        userRepository.save(updateduser);
         return updateduser;
     }
 
@@ -80,8 +81,11 @@ public class UserService {
             if (!activeLoans.isEmpty()) {
                 throw new RuntimeException("User has active loans.");
             }
+
+            User user = userRepository.findUserByEmail(email);
+
             loanRepository.deleteUserLoans(email);
-            userRepository.deleteUserByEmail(email);
+            userRepository.delete(user);
             return "User successfully deleted";
         }
 
