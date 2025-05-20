@@ -25,4 +25,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsUserByEmail(@Email(message = "the email does not contain @ symbol." ) String email);
     User findUserByEmail(@Email(message = "the email does not contain @ symbol." ) String email);
     void deleteUserByEmail(@Email(message = "the email does not contain @ symbol." ) String email);
+    User findFirstByOrderByAgeDesc();
 }

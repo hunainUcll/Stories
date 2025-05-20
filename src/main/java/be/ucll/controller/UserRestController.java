@@ -1,7 +1,6 @@
 package be.ucll.controller;
 
-import be.ucll.model.Loan;
-import be.ucll.model.User;
+import be.ucll.model.*;
 import be.ucll.service.LoanService;
 import be.ucll.service.UserService;
 import jakarta.validation.Valid;
@@ -101,6 +100,13 @@ public class UserRestController {
             errors.put(fieldName,fieldError);
         }
         return errors;
+    }
+
+    // Story 23
+
+    @GetMapping("/oldest")
+    public User getOldestUser(){
+        return userService.getOldestUser();
     }
 
 

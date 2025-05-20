@@ -98,5 +98,14 @@ public class UserService {
     public User findUsersByEmail(String mail) {
         return userRepository.findUserByEmail(mail);
     }
+
+    public User getOldestUser() {
+        if(userRepository.findAll().isEmpty()){
+            throw new RuntimeException("No oldest user found.");
+        }
+        return userRepository.findFirstByOrderByAgeDesc();
+    }
+
+
 }
 

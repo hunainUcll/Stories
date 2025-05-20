@@ -161,5 +161,16 @@ public class UserIntegrationTest {
     }
 
 
+    // story 23
+    @Test
+    public void givenUsers_whenInvokingGetOldest_thenOnlyOldestIsReturned() {
+        client.get()
+                .uri("/users/oldest")
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody()
+                .json("{\"name\":\"Jane Toe\",\"age\":30,\"email\":\"jane.toe@ucll.be\",\"password\":\"jane1234\"}");
+    }
+
 }
 

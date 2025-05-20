@@ -313,6 +313,33 @@ public class UserServiceTest {
         assertEquals("Bob", savedUser.getName());
         assertNull(savedUser.getProfile());
     }
+    // Story 23 (i don't want to this anymore)
+    // happy
+    @Test
+    void givenUsers_whenGettingOldestUser_thenOldestUserIsReturned() {
+        User user = userService.getOldestUser();
+
+        assertNotNull(user);
+        assertEquals("jane.toe@ucll.be",user.getEmail());
+    }
+
+    // unhappy like me (seriously i do not want to do this for another second let alone the rest of my life)
+    // might just quit
+    @Test
+    void givenEmptyListOfUsers_whenGettingOldest_thenThrowsRuntimeException() {
+        UserRepository userRepository = new UserRepositoryStub() {};
+        userRepository.deleteAll();
+        LoanRepository loanRepository = new LoanRepository();
+        ProfileRepository profileRepository = new ProfileRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository);
+
+        Exception exception = assertThrows(RuntimeException.class, () ->
+                userService.getOldestUser()
+        );
+        assertEquals("No oldest user found.", exception.getMessage());
+
+    }
+
 
 
 

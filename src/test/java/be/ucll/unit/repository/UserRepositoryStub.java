@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class UserRepositoryStub implements UserRepository {
 
 
-    private  List<User> users = new ArrayList<>( List.of(
+    private List<User> users = new ArrayList<>( List.of(
             new User("21Savage", 25, "21.savage@ucll.be", "john1234"),
             new User("Jane Toe", 30, "jane.toe@ucll.be", "jane1234"),
             new User("Jack Doe", 5, "jack.doe@ucll.be", "jack1234"),
@@ -94,6 +94,18 @@ public class UserRepositoryStub implements UserRepository {
         return end;
     }
 
+    @Override
+    public User findFirstByOrderByAgeDesc() {
+        User oldest = users.get(0);
+        for(User user : users){
+            if(user.getAge() > oldest.getAge()){
+                oldest = user;
+            }
+        }
+        return oldest;
+    }
+
+
     @Override public Optional<User> findById(Long aLong) {
         throw new UnsupportedOperationException();
     }
@@ -137,6 +149,8 @@ public class UserRepositoryStub implements UserRepository {
     public void deleteUserByEmail(String email) {
 
     }
+
+
 
     @Override
     public void flush() {
