@@ -3,6 +3,7 @@ package be.ucll.service;
 import be.ucll.model.Loan;
 import be.ucll.model.User;
 import be.ucll.repository.LoanRepository;
+import be.ucll.repository.ProfileRepository;
 import be.ucll.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,12 +13,14 @@ import java.util.List;
 public class UserService {
 
     private UserRepository userRepository;
-    private final LoanRepository loanRepository;  // Inject LoanRepository
+    private LoanRepository loanRepository;
+    private ProfileRepository profileRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, LoanRepository loanRepository) {
+    public UserService(UserRepository userRepository, LoanRepository loanRepository,ProfileRepository profileRepository) {
         this.userRepository = userRepository;
         this.loanRepository = loanRepository;
+        this.profileRepository = profileRepository;
     }
 
     public List<User> getAllUsers(){
@@ -57,6 +60,9 @@ public class UserService {
     public User registerUser(User user) {
         if(userRepository.existsUserByEmail(user.getEmail())){
             throw new RuntimeException("User already exists.");
+        }
+        if(user.getProfile() != null){
+            profileRepository.save(user.getProfile());
         }
         return userRepository.save(user);
     }

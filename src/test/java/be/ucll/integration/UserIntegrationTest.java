@@ -85,14 +85,15 @@ public class UserIntegrationTest {
         client.post()
                 .uri("/users")
                 .header("Content-Type", "application/json")
-                .bodyValue("{\"name\":\"Kanye\",\"age\":40,\"email\":\"kanye@ucll.be\",\"password\":\"ye1234555\"}")
+                .bodyValue("{\"name\":\"Kanye\",\"age\":40,\"email\":\"kanye@ucll.be\",\"password\":\"ye1234555\",\"profile\":null}")
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectBody()
-                .json("{\"name\":\"Kanye\",\"age\":40,\"email\":\"kanye@ucll.be\",\"password\":\"ye1234555\"}");
+                .json("{\"name\":\"Kanye\",\"age\":40,\"email\":\"kanye@ucll.be\",\"password\":\"ye1234555\",\"profile\":null}");
 
         assertEquals("Kanye", userService.findUsersByEmail("kanye@ucll.be").getName());
     }
+
 
     @Test
     public void givenExistingUser_whenInvokingPut_thenUserIsUpdated() {
@@ -143,6 +144,22 @@ public class UserIntegrationTest {
                         "}" +
                         "]");
     }
+
+    // sotry 22
+    @Test
+    public void givenUserWithProfile_whenInvokingPost_thenUserIsSavedWithProfile() {
+        client.post()
+                .uri("/users")
+                .header("Content-Type", "application/json")
+                .bodyValue("{\"name\":\"22Savage\",\"age\":25,\"email\":\"22.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Rapper and artist\",\"location\":\"Atlanta\",\"interests\":\"Music, Entrepreneurship\"}}")
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody()
+                .json("{\"name\":\"22Savage\",\"age\":25,\"email\":\"22.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Rapper and artist\",\"location\":\"Atlanta\",\"interests\":\"Music, Entrepreneurship\"}}");
+
+        assertEquals("22Savage", userService.findUsersByEmail("22.savage@ucll.be").getName());
+    }
+
 
 }
 

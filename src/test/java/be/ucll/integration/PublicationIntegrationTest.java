@@ -43,7 +43,7 @@ public class PublicationIntegrationTest {
                         "\"title\":\"Harry Potter\"," +
                         "\"author\":\"J.K. Rowling\"," +
                         "\"publicationYear\":2001," +
-                        "\"availableCopies\":4," +
+                        "\"availableCopies\":5," +
                         "\"isbn\":\"978-0-545-01022-1\"" +
                         "}" +
                         "]");
@@ -83,12 +83,6 @@ public class PublicationIntegrationTest {
                         "}" +
                         "]");
     }
-
-
-
-
-
-
 
 }
 

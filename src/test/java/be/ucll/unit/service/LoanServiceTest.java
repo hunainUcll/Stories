@@ -20,25 +20,15 @@ public class LoanServiceTest {
 
     private LoanService loanService;
     private UserRepositoryStub userRepository;
-    private PublicationRepository publicationRepository;
+//   private PublicationRepository publicationRepository;
     private LoanRepository loanRepository;
 
 
     @BeforeEach
     void setUp() {
         userRepository = new UserRepositoryStub();
-
-        List<User> users = List.of(
-                new User("21Savage", 25, "21.savage@ucll.be", "john1234"),
-                new User("Jane Toe", 30, "jane.toe@ucll.be", "jane1234"),
-                new User("Jack Doe", 5, "jack.doe@ucll.be", "jack1234"),
-                new User("Sarah Doe", 4, "sarah.doe@ucll.be", "sarah1234"),
-                new User("Birgit Doe", 18, "birgit.doe@ucll.be", "birgit1234")
-        );
-
-        userRepository.saveAll(users);
-        publicationRepository = new PublicationRepository();
-        loanRepository = new LoanRepository();
+   //     publicationRepository = new PublicationRepository();
+       loanRepository = new LoanRepository();
         loanService = new LoanService(loanRepository, userRepository);
     }
 

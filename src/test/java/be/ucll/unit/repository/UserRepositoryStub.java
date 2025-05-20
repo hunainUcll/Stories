@@ -12,13 +12,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class UserRepositoryStub implements UserRepository {
-    private final List<User> users = new ArrayList<>();
+
+
+    private  List<User> users = new ArrayList<>( List.of(
+            new User("21Savage", 25, "21.savage@ucll.be", "john1234"),
+            new User("Jane Toe", 30, "jane.toe@ucll.be", "jane1234"),
+            new User("Jack Doe", 5, "jack.doe@ucll.be", "jack1234"),
+            new User("Sarah Doe", 4, "sarah.doe@ucll.be", "sarah1234"),
+            new User("Birgit Doe", 18, "birgit.doe@ucll.be", "birgit1234"))
+    );
+
 
     @Override
     public List<User> findAll() {
-        return new ArrayList<>(users);
+        return users;
     }
 
     @Override
@@ -31,13 +41,59 @@ public class UserRepositoryStub implements UserRepository {
     public void delete(User entity) {
         users.remove(entity);
     }
+    @Override
+    public void deleteAllById(Iterable<? extends Long> longs) {}
 
     @Override
-    public void deleteAllById(Iterable<? extends Long> longs) {
-
+    public User findUserByEmail(String email) {
+        for (User user : users) {
+            if (user.getEmail().equals(email)) {
+                return user;
+            }
+        }
+        return null;
     }
 
-    // You can leave these unimplemented if unused
+    @Override
+    public boolean existsUserByEmail(String email) {
+        for (User user : users) {
+            if (user.getEmail().equals(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public List<User> findUsersByAgeBetween(int min, int max) {
+        List<User> end = new ArrayList<>();
+        for (User user : users){
+            if (user.getAge() >= min && user.getAge() <= max ){
+                end.add(user);
+            }
+        }
+        return end;
+    }
+
+    @Override
+    public List<User> findUserByName(String name) {
+        return List.of();    }
+
+    @Override
+    public List<User> findUsersByName(String name) {
+        List<User> end = new ArrayList<>();
+
+        for (User user : users){
+            if (user.getName().contains(name)){
+                end.add(user);
+            }
+        }
+        if (name.isEmpty()){
+            end = users;
+        }
+        return end;
+    }
+
     @Override public Optional<User> findById(Long aLong) {
         throw new UnsupportedOperationException();
     }
@@ -76,30 +132,6 @@ public class UserRepositoryStub implements UserRepository {
         return List.of();
     }
 
-    @Override
-    public List<User> findUsersByAgeBetween(int ageAfter, int ageBefore) {
-        return List.of();
-    }
-
-    @Override
-    public List<User> findUserByName(String name) {
-        return List.of();
-    }
-
-    @Override
-    public List<User> findUsersByName(String name) {
-        return List.of();
-    }
-
-    @Override
-    public boolean existsUserByEmail(String email) {
-        return false;
-    }
-
-    @Override
-    public User findUserByEmail(String email) {
-        return null;
-    }
 
     @Override
     public void deleteUserByEmail(String email) {

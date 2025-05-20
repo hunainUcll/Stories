@@ -1,5 +1,6 @@
 package be.ucll.unit.model;
 
+import be.ucll.model.Profile;
 import be.ucll.model.User;
 import jakarta.validation.*;
 import org.junit.jupiter.api.AfterAll;
@@ -146,6 +147,51 @@ public class UserTest {
 
         assertEquals("Email cannot be changed.", exception.getMessage());
     }
+
+    // story 22
+    @Test
+    void givenValidUserWithoutProfile_whenCreated_thenNoViolations() {
+        User user = new User("Charlie", 20, "charlie@example.com", "charlie1234");
+
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertTrue(violations.isEmpty());
+    }
+
+    @Test
+    void givenUserWithProfile_whenSettingProfileToNull_thenProfileIsRemoved() {
+        User user = new User("Nina", 22, "nina@example.com", "nina1234");
+        Profile profile = new Profile("Student", "Antwerp", "Coding");
+
+        user.setProfile(profile);
+        user.setProfile(null); // remove profile
+
+        assertNull(user.getProfile());
+    }
+
+
+    @Test
+    void givenAdultUser_whenSettingProfile_thenProfileIsSet() {
+        User user = new User("Dylan", 21, "dylan@example.com", "dylan1234");
+        Profile profile = new Profile("Likes biking", "Leuven", "Biking");
+
+        user.setProfile(profile);
+
+        assertEquals(profile, user.getProfile());
+    }
+
+
+    @Test
+    void givenUnderageUserWithProfile_whenSettingUser_thenThrowsException() {
+        Profile profile = new Profile("Young talent", "Brussels", "Music");
+        User user = new User("Tommy", 17, "tommy@example.com", "tommy1234");
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            user.setProfile(profile);;
+        });
+
+        assertEquals("User must be at least 18 year old to have a profile.", exception.getMessage());
+    }
+
 
 
 }

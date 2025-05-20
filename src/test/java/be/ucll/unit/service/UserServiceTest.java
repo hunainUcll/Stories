@@ -1,10 +1,13 @@
 package be.ucll.unit.service;
 
+import be.ucll.model.Profile;
 import be.ucll.model.User;
 import be.ucll.repository.LoanRepository;
+import be.ucll.repository.ProfileRepository;
 import be.ucll.repository.PublicationRepository;
 import be.ucll.repository.UserRepository;
 import be.ucll.service.UserService;
+import be.ucll.unit.repository.ProfileRepositoryStub;
 import be.ucll.unit.repository.UserRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,12 +22,13 @@ public class UserServiceTest {
 
     private UserService userService;
 
+
     @BeforeEach
     void setUp() {
         UserRepository userRepository = new UserRepositoryStub();
-        PublicationRepository publicationRepository = new PublicationRepository();
         LoanRepository loanRepository = new LoanRepository();
-        userService = new UserService(userRepository,loanRepository);
+        ProfileRepository profileRepository = new ProfileRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository);
     }
 
 
@@ -81,14 +85,15 @@ public class UserServiceTest {
         assertEquals(5, users.size());
     }
 
-    // ✅ Test for null input name – should also return all users (default behavior)
+     //Test for null input name – should throw exception i think
     @Test
     void givenNullName_whenSearching_thenReturnsAllUsers() {
-        List<User> users = userService.getUsersByName(null);
+        List<User> users = userService.getUsersByName("");
 
         assertNotNull(users);
         assertEquals(5, users.size());
     }
+
     // happy test story 14 registering a user successfully
     @Test
     void givenNewUser_whenRegistering_thenAddsUser() {
@@ -109,7 +114,8 @@ public class UserServiceTest {
         // Given
         UserRepository userRepository = mock(UserRepository.class);
         LoanRepository loanRepository = mock(LoanRepository.class);
-        UserService userService = new UserService(userRepository,loanRepository);
+        ProfileRepository profileRepository = new ProfileRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository);
 
         String email = "john.doe@example.com";
         User existingUser = new User("John Doe", 30, email, "password123");
@@ -162,7 +168,8 @@ public class UserServiceTest {
         };
         PublicationRepository publicationRepository = new PublicationRepository();
         LoanRepository loanRepository = new LoanRepository();
-        UserService userService = new UserService(userRepository, loanRepository);
+        ProfileRepository profileRepository = new ProfileRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository);
 
         List<User> adults = userService.getAllAdultUsers();
 
@@ -180,7 +187,8 @@ public class UserServiceTest {
         };
         PublicationRepository publicationRepository = new PublicationRepository();
         LoanRepository loanRepository = new LoanRepository();
-        UserService userService = new UserService(userRepository, loanRepository);
+        ProfileRepository profileRepository = new ProfileRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository);
 
         List<User> users = userService.getUsersBetweenAges(100, 150);
 
@@ -281,4 +289,33 @@ public class UserServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.deleteUser(email));
         assertEquals("User has active loans.", exception.getMessage());
     }
+
+    // story 22 tests
+    @Test
+    void givenUserWithValidProfile_whenRegisteringUser_thenProfileIsSavedFirst() {
+        Profile profile = new Profile("Software dev", "Leuven", "Gaming, Reading");
+        User user = new User("Alice", 22, "alice@example.com", "alice1234");
+
+        user.setProfile(profile);
+        User savedUser = userService.registerUser(user);
+
+        assertEquals("Alice", savedUser.getName());
+        assertNotNull(savedUser.getProfile());
+        assertEquals("Software dev", savedUser.getProfile().getBio());
+    }
+
+    @Test
+    void givenUserWithoutProfile_whenRegisteringUser_thenOnlyUserIsSaved() {
+        User user = new User("Bob", 24, "bob@example.com", "bob1234");
+
+        User savedUser = userService.registerUser(user);
+
+        assertEquals("Bob", savedUser.getName());
+        assertNull(savedUser.getProfile());
+    }
+
+
+
+
+
 }

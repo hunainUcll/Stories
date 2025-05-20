@@ -32,6 +32,21 @@ public class User {
     @Length(max = 25,message = "Password must not be more than 25 characters long.")
     private String password;
 
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        if (this.age < 18){
+            throw new RuntimeException("User must be at least 18 year old to have a profile.");
+        }
+        this.profile = profile;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
     public User(String name, int age, String email, String password) {
         setName(name);
         setPassword(password);
@@ -68,4 +83,6 @@ public class User {
         this.age = age;
         this.password = password;
     }
+
+
 }
