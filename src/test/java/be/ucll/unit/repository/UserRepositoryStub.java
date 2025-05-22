@@ -1,5 +1,6 @@
 package be.ucll.unit.repository;
 
+import be.ucll.model.Profile;
 import be.ucll.model.User;
 import be.ucll.repository.UserRepository;
 import org.springframework.data.domain.Example;
@@ -8,23 +9,30 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class UserRepositoryStub implements UserRepository {
 
 
-    private List<User> users = new ArrayList<>( List.of(
+    private List<User> users = new ArrayList<>(List.of(
             new User("21Savage", 25, "21.savage@ucll.be", "john1234"),
             new User("Jane Toe", 30, "jane.toe@ucll.be", "jane1234"),
             new User("Jack Doe", 5, "jack.doe@ucll.be", "jack1234"),
             new User("Sarah Doe", 4, "sarah.doe@ucll.be", "sarah1234"),
-            new User("Birgit Doe", 18, "birgit.doe@ucll.be", "birgit1234"))
-    );
-
+            new User("Birgit Doe", 18, "birgit.doe@ucll.be", "birgit1234"),
+            new User("22Savage", 25, "22.savage@ucll.be", "john1234", new Profile(
+                    "Aspiring rapper with a love for tech.",
+                    "Antwerp",
+                    "Music, rapping, Basketball"
+            )),
+            new User("23Savage", 25, "23.savage@ucll.be", "john1234", new Profile(
+                    "Aspiring rapper with a love for activities.",
+                    "Brussels",
+                    "Smoking, rapping, Coding"
+            ))
+    ));
 
     @Override
     public List<User> findAll() {
@@ -104,6 +112,55 @@ public class UserRepositoryStub implements UserRepository {
         }
         return oldest;
     }
+
+    // story 24
+    @Override
+    public List<User> findUsersByProfile_InterestsContainingIgnoreCase(String interests) {
+        if (interests == null || interests.isBlank()) return List.of();
+
+        String interestLower = interests.toLowerCase();
+        List<User> matchingUsers = new ArrayList<>();
+
+        for (User user : users) {
+            if (user.getProfile() == null) continue;
+            List<String> userInterests = Collections.singletonList(user.getProfile().getInterests());
+            if (userInterests == null) continue;
+
+            for (String interest : userInterests) {
+                if (interest != null && interest.toLowerCase().contains(interestLower)) {
+                    matchingUsers.add(user);
+                    break; // match found, no need to check other interests
+                }
+            }
+        }
+        return matchingUsers;
+    }
+
+    // Story 25
+    @Override
+    public List<User> findUsersByProfile_InterestsContainingIgnoreCaseAndAgeGreaterThanEqualOrderByProfile_Location(String interests, int age) {
+        if (interests == null || interests.isBlank()) return List.of();
+
+        String interestLower = interests.toLowerCase();
+        List<User> matchingUsers = new ArrayList<>();
+
+        for (User user : users) {
+            if (user.getAge() < age) continue;
+            if (user.getProfile() == null) continue;
+
+            String userInterest = user.getProfile().getInterests();
+            if (userInterest != null && userInterest.toLowerCase().contains(interestLower)) {
+                matchingUsers.add(user);
+            }
+        }
+
+        matchingUsers.sort(Comparator.comparing(u -> u.getProfile().getLocation(), String.CASE_INSENSITIVE_ORDER));
+        return matchingUsers;
+    }
+
+
+
+
 
 
     @Override public Optional<User> findById(Long aLong) {

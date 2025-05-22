@@ -116,6 +116,12 @@ public class UserRestController {
         return userService.getUsersByInterest(interest);
     }
 
+    @GetMapping("/interest/{interest}/{age}")
+    public List<User> getUsersByInterestAndAboveAge(@PathVariable String interest, @PathVariable int age){
+        return userService.getUsersByInterestAndAboveAge(interest,age);
+
+    }
+
 
 
 

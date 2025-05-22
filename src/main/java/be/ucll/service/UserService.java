@@ -108,7 +108,30 @@ public class UserService {
 
 
     public List<User> getUsersByInterest(String interest) {
-        userRepository.findByInterestContaining
+
+        if(interest.trim().isEmpty()){
+            throw new RuntimeException("Interest cannot be empty");
+        }
+
+        List<User> users = userRepository.findUsersByProfile_InterestsContainingIgnoreCase(interest);
+        if(users.isEmpty()){
+            throw new RuntimeException("No users found with interest in "+ interest);
+        }
+        return users;
+    }
+
+    public List<User> getUsersByInterestAndAboveAge(String interest, int age) {
+        if(interest.trim().isEmpty()){
+            throw new RuntimeException("Interest cannot be empty");
+        }
+        if(!(age >= 0 && age <= 150)){
+            throw new RuntimeException("Invalid age. Age must be between 0 and 150.");
+        }
+        List<User> users = userRepository.findUsersByProfile_InterestsContainingIgnoreCaseAndAgeGreaterThanEqualOrderByProfile_Location(interest,age);
+        if(users.isEmpty()){
+            throw new RuntimeException("No users found with interest in "+ interest +" and older than "+ age);
+        }
+        return users;
     }
 }
 

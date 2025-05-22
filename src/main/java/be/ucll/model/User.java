@@ -53,6 +53,14 @@ public class User {
         setEmail(email);
         setAge(age);
     }
+    // making second constructor for testing purposes
+    public User(String name, int age, String email, String password,Profile profile) {
+        setName(name);
+        setPassword(password);
+        setEmail(email);
+        setAge(age);
+        setProfile(profile);
+    }
 
     public String getName() {
         return name;

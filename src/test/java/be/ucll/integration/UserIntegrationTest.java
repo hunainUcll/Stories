@@ -48,9 +48,12 @@ public class UserIntegrationTest {
                         "{\"name\":\"Jane Toe\",\"age\":30,\"email\":\"jane.toe@ucll.be\",\"password\":\"jane1234\"}," +
                         "{\"name\":\"Jack Doe\",\"age\":5,\"email\":\"jack.doe@ucll.be\",\"password\":\"jack1234\"}," +
                         "{\"name\":\"Sarah Doe\",\"age\":4,\"email\":\"sarah.doe@ucll.be\",\"password\":\"sarah1234\"}," +
-                        "{\"name\":\"Birgit Doe\",\"age\":18,\"email\":\"birgit.doe@ucll.be\",\"password\":\"birgit1234\"}" +
+                        "{\"name\":\"Birgit Doe\",\"age\":18,\"email\":\"birgit.doe@ucll.be\",\"password\":\"birgit1234\"}," +
+                        "{\"name\":\"22Savage\",\"age\":25,\"email\":\"22.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Aspiring rapper with a love for tech.\",\"location\":\"Antwerp\",\"interests\":\"Music, rapping, Basketball\"}}," +
+                        "{\"name\":\"23Savage\",\"age\":25,\"email\":\"23.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Aspiring rapper with a love for activities.\",\"location\":\"brussels\",\"interests\":\"Smoking, rapping, Coding\"}}" +
                         "]");
     }
+
 
     @Test
     public void givenUsers_whenInvokingGetAdults_thenOnlyAdultsAreReturned() {
@@ -62,9 +65,12 @@ public class UserIntegrationTest {
                 .json("[" +
                         "{\"name\":\"21Savage\",\"age\":25,\"email\":\"21.savage@ucll.be\",\"password\":\"john1234\"}," +
                         "{\"name\":\"Jane Toe\",\"age\":30,\"email\":\"jane.toe@ucll.be\",\"password\":\"jane1234\"}," +
-                        "{\"name\":\"Birgit Doe\",\"age\":18,\"email\":\"birgit.doe@ucll.be\",\"password\":\"birgit1234\"}" +
+                        "{\"name\":\"Birgit Doe\",\"age\":18,\"email\":\"birgit.doe@ucll.be\",\"password\":\"birgit1234\"}," +
+                        "{\"name\":\"22Savage\",\"age\":25,\"email\":\"22.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Aspiring rapper with a love for tech.\",\"location\":\"Antwerp\",\"interests\":\"Music, rapping, Basketball\"}}," +
+                        "{\"name\":\"23Savage\",\"age\":25,\"email\":\"23.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Aspiring rapper with a love for activities.\",\"location\":\"brussels\",\"interests\":\"Smoking, rapping, Coding\"}}" +
                         "]");
     }
+
 
     @Test
     public void givenUsers_whenInvokingGetUsersByAgeRange_thenCorrectUsersReturned() {
@@ -76,9 +82,12 @@ public class UserIntegrationTest {
                 .json("[" +
                         "{\"name\":\"21Savage\",\"age\":25,\"email\":\"21.savage@ucll.be\",\"password\":\"john1234\"}," +
                         "{\"name\":\"Jack Doe\",\"age\":5,\"email\":\"jack.doe@ucll.be\",\"password\":\"jack1234\"}," +
-                        "{\"name\":\"Birgit Doe\",\"age\":18,\"email\":\"birgit.doe@ucll.be\",\"password\":\"birgit1234\"}" +
+                        "{\"name\":\"Birgit Doe\",\"age\":18,\"email\":\"birgit.doe@ucll.be\",\"password\":\"birgit1234\"}," +
+                        "{\"name\":\"22Savage\",\"age\":25,\"email\":\"22.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Aspiring rapper with a love for tech.\",\"location\":\"Antwerp\",\"interests\":\"Music, rapping, Basketball\"}}," +
+                        "{\"name\":\"23Savage\",\"age\":25,\"email\":\"23.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Aspiring rapper with a love for activities.\",\"location\":\"brussels\",\"interests\":\"Smoking, rapping, Coding\"}}" +
                         "]");
     }
+
 
     @Test
     public void givenUser_whenInvokingPost_thenUserIsSaved() {
@@ -151,13 +160,13 @@ public class UserIntegrationTest {
         client.post()
                 .uri("/users")
                 .header("Content-Type", "application/json")
-                .bodyValue("{\"name\":\"22Savage\",\"age\":25,\"email\":\"22.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Rapper and artist\",\"location\":\"Atlanta\",\"interests\":\"Music, Entrepreneurship\"}}")
+                .bodyValue("{\"name\":\"24Savage\",\"age\":25,\"email\":\"24.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Rapper and artist\",\"location\":\"Atlanta\",\"interests\":\"Music, Entrepreneurship\"}}")
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectBody()
-                .json("{\"name\":\"22Savage\",\"age\":25,\"email\":\"22.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Rapper and artist\",\"location\":\"Atlanta\",\"interests\":\"Music, Entrepreneurship\"}}");
+                .json("{\"name\":\"24Savage\",\"age\":25,\"email\":\"24.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Rapper and artist\",\"location\":\"Atlanta\",\"interests\":\"Music, Entrepreneurship\"}}");
 
-        assertEquals("22Savage", userService.findUsersByEmail("22.savage@ucll.be").getName());
+        assertEquals("24Savage", userService.findUsersByEmail("24.savage@ucll.be").getName());
     }
 
 
@@ -171,6 +180,83 @@ public class UserIntegrationTest {
                 .expectBody()
                 .json("{\"name\":\"Jane Toe\",\"age\":30,\"email\":\"jane.toe@ucll.be\",\"password\":\"jane1234\"}");
     }
+
+    // story 24
+    @Test
+    public void givenDbInit_whenInvokingGetUsersByInterestRapping_thenReturns22And23Savage() {
+        client.get()
+                .uri("/users/interest/rapping")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .json("""
+                      [
+                          {
+                              "name": "22Savage",
+                              "age": 25,
+                              "email": "22.savage@ucll.be",
+                              "password": "john1234",
+                              "profile": {
+                                  "bio": "Aspiring rapper with a love for tech.",
+                                  "location": "Antwerp",
+                                  "interests": "Music, rapping, Basketball"
+                              }
+                          },
+                          {
+                              "name": "23Savage",
+                              "age": 25,
+                              "email": "23.savage@ucll.be",
+                              "password": "john1234",
+                              "profile": {
+                                  "bio": "Aspiring rapper with a love for activities.",
+                                  "location": "brussels",
+                                  "interests": "Smoking, rapping, Coding"
+                              }
+                          }
+                      ]
+                      """);
+    }
+
+
+    // Story 25
+
+    @Test
+    public void givenDbInit_whenInvokingGetUsersByInterestAndAge_thenReturns22And23Savage() {
+        client.get()
+                .uri("/users/interest/rapping/20")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .json("""
+                    [
+                        {
+                            "name": "22Savage",
+                            "age": 25,
+                            "email": "22.savage@ucll.be",
+                            "password": "john1234",
+                            "profile": {
+                                "bio": "Aspiring rapper with a love for tech.",
+                                "location": "Antwerp",
+                                "interests": "Music, rapping, Basketball"
+                            }
+                        },
+                        {
+                            "name": "23Savage",
+                            "age": 25,
+                            "email": "23.savage@ucll.be",
+                            "password": "john1234",
+                            "profile": {
+                                "bio": "Aspiring rapper with a love for activities.",
+                                "location": "brussels",
+                                "interests": "Smoking, rapping, Coding"
+                            }
+                        }
+                    ]
+                """);
+    }
+
+
+
 
 }
 

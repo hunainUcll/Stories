@@ -32,31 +32,24 @@ public class UserServiceTest {
     }
 
 
-    // note for the teacher - used ai here to only generate the comments to make it simpler for me to understand whats going on
-
-// ✅ HAPPY PATH TESTS
-
-    // ✅ Test retrieving all users
     @Test
     void givenUserService_whenGettingAllUsers_thenReturnsUsers() {
         List<User> users = userService.getAllUsers();
 
         assertNotNull(users);
-        assertEquals(5, users.size());
+        assertEquals(7, users.size());
         assertEquals("21Savage", users.get(0).getName());
     }
 
-    // ✅ Test filtering users within a valid age range
     @Test
     void givenUsers_whenGettingWithinValidAgeRange_thenReturnsCorrectUsers() {
         List<User> users = userService.getUsersBetweenAges(18, 30);
 
         assertNotNull(users);
-        assertEquals(3, users.size());
+        assertEquals(5, users.size());
         assertTrue(users.stream().allMatch(user -> user.getAge() >= 18 && user.getAge() <= 30));
     }
 
-    // ✅ Test getting users by name (full or partial match)
     @Test
     void givenUsersExist_whenSearchingByName_thenReturnsMatchingUsers() {
         List<User> users = userService.getUsersByName("Doe");
@@ -76,13 +69,12 @@ public class UserServiceTest {
         assertEquals("21Savage", users.get(0).getName());
     }
 
-    // ✅ Test for empty input name – should return all users (default behavior)
     @Test
     void givenEmptyName_whenSearching_thenReturnsAllUsers() {
         List<User> users = userService.getUsersByName("");
 
         assertNotNull(users);
-        assertEquals(5, users.size());
+        assertEquals(7, users.size());
     }
 
      //Test for null input name – should throw exception i think
@@ -91,7 +83,7 @@ public class UserServiceTest {
         List<User> users = userService.getUsersByName("");
 
         assertNotNull(users);
-        assertEquals(5, users.size());
+        assertEquals(7, users.size());
     }
 
     // happy test story 14 registering a user successfully
@@ -149,14 +141,6 @@ public class UserServiceTest {
         assertFalse(userService.userExists(email));
     }
 
-
-
-
-
-
-    // ❌ UNHAPPY PATH TESTS
-
-    // ❌ No adult users in system
     @Test
     void givenNoAdults_whenGettingAllAdults_thenReturnsEmptyList() {
         // Custom user repo with no adult users
@@ -177,7 +161,6 @@ public class UserServiceTest {
         assertTrue(adults.isEmpty());
     }
 
-    // ❌ No users in given age range
     @Test
     void givenNoMatchingUsers_whenGettingWithinAgeRange_thenReturnsEmptyList() {
         UserRepository userRepository = new UserRepositoryStub() {
@@ -196,7 +179,6 @@ public class UserServiceTest {
         assertTrue(users.isEmpty());
     }
 
-    // ❌ Invalid input: min > max age
     @Test
     void givenInvalidRange_whenMinGreaterThanMax_thenThrowsException() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
@@ -206,7 +188,6 @@ public class UserServiceTest {
         assertEquals("Minimum age cannot be greater than maximum age.", exception.getMessage());
     }
 
-    // ❌ Invalid input: age below 0
     @Test
     void givenInvalidRange_whenBelowZero_thenThrowsException() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
@@ -216,7 +197,6 @@ public class UserServiceTest {
         assertEquals("Invalid age range. Age must be between 0 and 150.", exception.getMessage());
     }
 
-    // ❌ Invalid input: age above 150
     @Test
     void givenInvalidRange_whenAbove150_thenThrowsException() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
@@ -226,7 +206,6 @@ public class UserServiceTest {
         assertEquals("Invalid age range. Age must be between 0 and 150.", exception.getMessage());
     }
 
-    // ❌ Name not found: should throw custom exception
     @Test
     void givenNoMatchingUsers_whenSearchingByName_thenThrowsException() {
         RuntimeException exception = assertThrows(RuntimeException.class, () ->
@@ -239,7 +218,7 @@ public class UserServiceTest {
     //unhappy test story 14 user already exists when registering
     @Test
     void givenExistingEmail_whenRegistering_thenThrowsException() {
-        // interesting method used by AI to stimulate a user already exists by overriding the userexits validation method , kinda feels like cheating so i will use a user that really exists in my DB
+        // interesting method used by AI to stimulate a user already exists by overriding the user exits validation method , kinda feels like cheating so i will use a user that really exists in my DB
 
         /* UserRepository userRepository = new UserRepository() {
             @Override
@@ -339,6 +318,80 @@ public class UserServiceTest {
         assertEquals("No oldest user found.", exception.getMessage());
 
     }
+
+    // story 24
+    // happy
+    @Test
+    void getUsersByInterest_HappyPath_ReturnsMatchingUsers() {
+
+        List<User> result = userService.getUsersByInterest("rapping");
+
+        assertFalse(result.isEmpty());
+        for (User user : result) {
+            assertNotNull(user.getProfile());
+            assertTrue(user.getProfile().getInterests().toLowerCase().contains("rapping"));
+        }
+        // because i know there are only 2 users with this interest
+        assertEquals(2,result.size());
+    }
+
+    //unhappy
+
+    @Test
+    void getUsersByInterest_EmptyInterest_ThrowsException() {
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.getUsersByInterest("   ");
+        });
+
+        assertEquals("Interest cannot be empty", exception.getMessage());
+    }
+
+
+    @Test
+    void getUsersByInterest_NoUsersFound_ThrowsException() {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.getUsersByInterest("surfing"); // not in any profile
+        });
+        assertEquals("No users found with interest in surfing", exception.getMessage());
+    }
+
+    // story 25
+    @Test
+    public void givenValidInterestAndAge_whenInvoking_thenReturnsMatchingUsers() {
+        List<User> result = userService.getUsersByInterestAndAboveAge("rapping", 20);
+        assertEquals(2, result.size());
+        assertTrue(result.stream().anyMatch(user -> user.getName().equals("22Savage")));
+        assertTrue(result.stream().anyMatch(user -> user.getName().equals("23Savage")));
+    }
+
+    // unhappy and depressed tests like me
+    @Test
+    public void givenEmptyInterest_whenInvoking_thenThrowsRuntimeException() {
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> userService.getUsersByInterestAndAboveAge("  ", 20));
+        assertEquals("Interest cannot be empty", ex.getMessage());
+    }
+    @Test
+    public void givenNegativeAge_whenInvoking_thenThrowsRuntimeException() {
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> userService.getUsersByInterestAndAboveAge("rapping", -5));
+        assertEquals("Invalid age. Age must be between 0 and 150.", ex.getMessage());
+    }
+    @Test
+    public void givenValidInterestAndAge_whenNoMatchingUsers_thenThrowsRuntimeException() {
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> userService.getUsersByInterestAndAboveAge("karate", 20));
+        assertEquals("No users found with interest in karate and older than 20", ex.getMessage());
+    }
+
+
+
+
+
+
+
+
 
 
 
