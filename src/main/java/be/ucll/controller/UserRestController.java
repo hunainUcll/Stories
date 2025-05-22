@@ -109,6 +109,13 @@ public class UserRestController {
         return userService.getOldestUser();
     }
 
+    // story 24
+
+    @GetMapping("/interest/{interest}")
+    public List<User> getUsersByInterests(@PathVariable String interest){
+        return userService.getUsersByInterest(interest);
+    }
+
 
 
 

@@ -107,5 +107,8 @@ public class UserService {
     }
 
 
+    public List<User> getUsersByInterest(String interest) {
+        userRepository.findByInterestContaining
+    }
 }
 
