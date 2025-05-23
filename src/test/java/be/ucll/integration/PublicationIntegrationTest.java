@@ -23,11 +23,6 @@ public class PublicationIntegrationTest {
     @Autowired
     private PublicationRepository publicationRepository;
 
-    @AfterEach
-    public void resetData() {
-        publicationRepository.resetRepositoryData(); // Resets the in-memory list
-    }
-
     @Test
     public void givenPublications_whenInvokingGetPublicationsByTitleAndType_thenCorrectPublicationsAreReturned() {
         // Create some test publications first (make sure they're added to the repository or mock service)

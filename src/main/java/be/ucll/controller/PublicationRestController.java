@@ -29,6 +29,8 @@ public class PublicationRestController {
     public List<Publication> getAllPublications() {
         return publicationService.getAllPublications();
     }
+
+
     @GetMapping("/stock/{availableCopies}")
     public  List<Publication> getPublicationAboveStock(@PathVariable int availableCopies){
 

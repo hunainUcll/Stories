@@ -1,7 +1,11 @@
 package be.ucll.model;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 
+@Entity
+@DiscriminatorValue("magazine")
 public class Magazine extends Publication {
 
     @NotBlank(message = "editor is required.")
@@ -14,6 +18,8 @@ public class Magazine extends Publication {
         setEditor(editor);
         setISSN(ISSN);
     }
+
+    protected Magazine() {}
 
     public String getEditor() {
         return editor;

@@ -5,6 +5,7 @@ import be.ucll.model.Magazine;
 import be.ucll.model.Publication;
 import be.ucll.repository.PublicationRepository;
 import be.ucll.service.PublicationService;
+import be.ucll.unit.repository.PublicationRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ public class PublicationServiceTest {
 
     @BeforeEach
     void setUp() {
-        PublicationRepository repo = new PublicationRepository();
+        PublicationRepository repo = new PublicationRepositoryStub();
         service = new PublicationService(repo);
     }
 
@@ -129,20 +130,6 @@ public class PublicationServiceTest {
         assertTrue(results.isEmpty());
     }
 
-    @Test
-    void givenNullValuesToFilter_whenNoPublicationsExist_thenReturnsEmptyList() {
-        // Custom empty repo
-        PublicationRepository emptyRepo = new PublicationRepository() {
-            @Override
-            public List<Publication> getAllPublications() {
-                return List.of();  // override to return an empty list
-            }
-        };
-        PublicationService emptyService = new PublicationService(emptyRepo);
-
-        List<Publication> results = emptyService.findPublicationsByTitleAndType(null, null);
-        assertTrue(results.isEmpty());
-    }
 
 
 

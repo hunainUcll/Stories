@@ -13,17 +13,29 @@ public class PublicationService {
         this.publicationRepository = publicationRepository;
     }
 
-    // can throw an extra exception here if the type isnt a book or publication
-    public List<Publication> findPublicationsByTitleAndType(String title, String type) {
-        return publicationRepository.filterPublicationByTitleAndType(title, type);
-    }
-
     public List<Publication> getAllPublications() {
-        return publicationRepository.getAllPublications();
+        List<Publication> publications = publicationRepository.findAll();
+        return publications;
     }
 
-    // even here can throw an extra exception if available copies are below 0
+    public List<Publication> findPublicationsByTitleAndType(String title, String type) {
+        // a little dirty code but tests all cases here
+        if ((title == null || title.isBlank()) && (type == null || type.isBlank())) {
+            return publicationRepository.findAll();
+
+        } else if (title != null && !title.isBlank() && type != null && !type.isBlank()) {
+            return publicationRepository.findPublicationsByTitleContainingIgnoreCaseAndType(title, type);
+        } else if (title != null && !title.isBlank()) {
+            return publicationRepository.findPublicationsByTitleContainingIgnoreCase(title);
+        } else {
+            return publicationRepository.findPublicationsByTitleContainingIgnoreCaseAndType(title, type);
+        }
+    }
+
+
+
+    // even here can throw an extra exception if available copies are below 0 but wasnt asked in
     public List<Publication> getPublicationsAboveStock(int availableCopies) {
-        return  publicationRepository.filterPublicationsAboveCertainStock(availableCopies);
+        return  publicationRepository.findPublicationsByAvailableCopiesAfter(availableCopies);
     }
 }

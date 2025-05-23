@@ -1,7 +1,6 @@
 package be.ucll.repository;
 
-import be.ucll.model.Profile;
-import be.ucll.model.User;
+import be.ucll.model.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +11,12 @@ public class DbInitializer {
 
     private final UserRepository userRepository;
     private  final ProfileRepository profileRepository;
+    private final PublicationRepository publicationRepository;
 
-    public DbInitializer(UserRepository userRepository, ProfileRepository profileRepository) {
+    public DbInitializer(UserRepository userRepository, ProfileRepository profileRepository, PublicationRepository publicationRepository) {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
+        this.publicationRepository = publicationRepository;
     }
 
     @PostConstruct
@@ -44,5 +45,25 @@ public class DbInitializer {
                 new User("23Savage", 25, "23.savage@ucll.be", "john1234", profile23Savage)
         );
         userRepository.saveAll(users);
+
+
+        // Save books
+        List<Publication> books = List.of(
+                new Book("Harry Potter", "J.K. Rowling", "978-0-545-01022-1", 2001, 5),
+                new Book("Potter", "J.K. Rowling", "978-0-545-01032-1", 2001, 5)
+        );
+
+        // Save magazines
+        List<Publication> magazines = List.of(
+                new Magazine("Time", "John Doe", "1234-5678", 2022, 7),
+                new Magazine("TimeLess", "Jones Doe", "1234-5698", 2022, 7)
+        );
+
+        publicationRepository.saveAll(books);
+        publicationRepository.saveAll(magazines);
+
     }
+
+
+
 }

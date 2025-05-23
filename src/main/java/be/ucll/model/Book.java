@@ -1,8 +1,12 @@
 package be.ucll.model;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+@Entity
+@DiscriminatorValue("book")
 public class Book extends Publication {
 
     @NotBlank(message = "author is required.")
@@ -19,6 +23,8 @@ public class Book extends Publication {
         setAuthor(author);
         setISBN(ISBN);
      }
+
+    protected Book() {}
 
     public String getAuthor() {
         return author;

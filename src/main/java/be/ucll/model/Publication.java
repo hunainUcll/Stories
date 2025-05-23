@@ -1,8 +1,13 @@
 package be.ucll.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type",discriminatorType = DiscriminatorType.STRING)
 public abstract class Publication {
     @NotBlank(message = "title is required.")
     private String title;
@@ -13,11 +18,23 @@ public abstract class Publication {
     @PositiveOrZero(message = "Available copies must not be a negative number.")
     private int availableCopies;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(insertable = false, updatable = false)
+    private String type;
+    public String getType() {
+        return type;
+    }
+
     public Publication(String title, int publicationYear, int availableCopies) {
         setTitle(title);
         setPublicationYear(publicationYear);
         setAvailableCopies(availableCopies);
     }
+
+    protected Publication() {}
 
     public String getTitle() {
         return title;
@@ -49,5 +66,7 @@ public abstract class Publication {
         availableCopies++; // Increment available copies on return
     }
 
-
+    public Long getId() {
+        return id;
+    }
 }

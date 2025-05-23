@@ -8,6 +8,7 @@ import be.ucll.repository.PublicationRepository;
 import be.ucll.repository.UserRepository;
 import be.ucll.service.UserService;
 import be.ucll.unit.repository.ProfileRepositoryStub;
+import be.ucll.unit.repository.PublicationRepositoryStub;
 import be.ucll.unit.repository.UserRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -150,7 +151,7 @@ public class UserServiceTest {
                 return List.of();
             }
         };
-        PublicationRepository publicationRepository = new PublicationRepository();
+        PublicationRepository publicationRepository = new PublicationRepositoryStub();
         LoanRepository loanRepository = new LoanRepository();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
         userService = new UserService(userRepository,loanRepository,profileRepository);
@@ -168,7 +169,7 @@ public class UserServiceTest {
                 return List.of();
             }
         };
-        PublicationRepository publicationRepository = new PublicationRepository();
+        PublicationRepository publicationRepository = new PublicationRepositoryStub();
         LoanRepository loanRepository = new LoanRepository();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
         userService = new UserService(userRepository,loanRepository,profileRepository);
