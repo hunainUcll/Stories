@@ -1,8 +1,15 @@
 package be.ucll.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -46,6 +53,10 @@ public class User {
     @OneToOne
     @JoinColumn(name = "profile_id")
     private Profile profile;
+
+    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Membership> memberships = new ArrayList<>();
 
     public User(String name, int age, String email, String password) {
         setName(name);
@@ -92,5 +103,25 @@ public class User {
         this.password = password;
     }
 
+    // i still donot understand what i did here but it feels right ???
+    // also i accidentally used Date instead of localdate and  im getting erros if i change it so if it is not broken don't fix it
+    // i had to fix it turns out bean validation doesnt work on Date only on LocalDate , bean is pissing me off
+    private boolean dateOverlapCheck(LocalDate start1,LocalDate start2,LocalDate end1,LocalDate end2){
+        return !start1.isAfter(end2) && !start2.isAfter(end1);
+    }
 
+    public void addMembership(Membership membership){
+        for(Membership M : memberships){
+            if(dateOverlapCheck(M.getStartDate(),membership.getStartDate(), M.getEndDate(),membership.getEndDate())){
+                throw new RuntimeException("User has already a membership on that date.");
+            }
+        }
+        membership.setUser(this);
+        this.memberships.add(membership);
+
+    }
+
+    public List<Membership> getMemberships() {
+        return memberships;
+    }
 }

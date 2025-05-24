@@ -1,8 +1,10 @@
 package be.ucll.service;
 
 import be.ucll.model.Loan;
+import be.ucll.model.Membership;
 import be.ucll.model.User;
 import be.ucll.repository.LoanRepository;
+import be.ucll.repository.MembershipRepository;
 import be.ucll.repository.ProfileRepository;
 import be.ucll.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,14 @@ public class UserService {
     private UserRepository userRepository;
     private LoanRepository loanRepository;
     private ProfileRepository profileRepository;
+    private MembershipRepository membershipRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, LoanRepository loanRepository,ProfileRepository profileRepository) {
+    public UserService(UserRepository userRepository, LoanRepository loanRepository,ProfileRepository profileRepository,MembershipRepository membershipRepository) {
         this.userRepository = userRepository;
         this.loanRepository = loanRepository;
         this.profileRepository = profileRepository;
+        this.membershipRepository = membershipRepository;
     }
 
     public List<User> getAllUsers(){
@@ -95,7 +99,7 @@ public class UserService {
             return "User successfully deleted";
         }
 
-    public User findUsersByEmail(String mail) {
+    public User findUserByEmail(String mail) {
         return userRepository.findUserByEmail(mail);
     }
 
@@ -133,5 +137,18 @@ public class UserService {
         }
         return users;
     }
+
+    public User addMembership( String email, Membership membership) {
+        User user = userRepository.findUserByEmail(email);
+        if(user == null){throw new RuntimeException("User does not exist.");}
+        membership.setUser(user);
+        user.addMembership(membership);
+        membershipRepository.save(membership);
+        userRepository.save(user);
+        return userRepository.findUserByEmail(email);
+    }
+
+
+
 }
 

@@ -121,6 +121,11 @@ public class UserRestController {
         return userService.getUsersByInterestAndAboveAge(interest,age);
 
     }
+    @PostMapping("/{email}/membership")
+    public User addMembership(@PathVariable String email, @RequestBody @Valid Membership membership) {
+        return userService.addMembership(email,membership);
+    }
+
 
 
 

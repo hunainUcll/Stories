@@ -1,10 +1,10 @@
 package be.ucll.integration;
 
 import be.ucll.LibraryApplication;
+import be.ucll.model.User;
 import be.ucll.repository.DbInitializer;
 import be.ucll.repository.UserRepository;
 import be.ucll.service.UserService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +100,7 @@ public class UserIntegrationTest {
                 .expectBody()
                 .json("{\"name\":\"Kanye\",\"age\":40,\"email\":\"kanye@ucll.be\",\"password\":\"ye1234555\",\"profile\":null}");
 
-        assertEquals("Kanye", userService.findUsersByEmail("kanye@ucll.be").getName());
+        assertEquals("Kanye", userService.findUserByEmail("kanye@ucll.be").getName());
     }
 
 
@@ -115,7 +115,7 @@ public class UserIntegrationTest {
                 .expectBody()
                 .json("{\"name\":\"Jane Updated\",\"age\":31,\"email\":\"jane.toe@ucll.be\",\"password\":\"updated123\"}");
 
-        assertEquals("Jane Updated", userService.findUsersByEmail("jane.toe@ucll.be").getName());
+        assertEquals("Jane Updated", userService.findUserByEmail("jane.toe@ucll.be").getName());
     }
 
     @Test
@@ -125,7 +125,7 @@ public class UserIntegrationTest {
                 .exchange()
                 .expectStatus().is2xxSuccessful();
 
-        assertNull(userService.findUsersByEmail("jack.doe@ucll.be"));
+        assertNull(userService.findUserByEmail("jack.doe@ucll.be"));
     }
 
     @Test
@@ -166,7 +166,7 @@ public class UserIntegrationTest {
                 .expectBody()
                 .json("{\"name\":\"24Savage\",\"age\":25,\"email\":\"24.savage@ucll.be\",\"password\":\"john1234\",\"profile\":{\"bio\":\"Rapper and artist\",\"location\":\"Atlanta\",\"interests\":\"Music, Entrepreneurship\"}}");
 
-        assertEquals("24Savage", userService.findUsersByEmail("24.savage@ucll.be").getName());
+        assertEquals("24Savage", userService.findUserByEmail("24.savage@ucll.be").getName());
     }
 
 
@@ -255,6 +255,45 @@ public class UserIntegrationTest {
                 """);
     }
 
+
+    @Test
+    public void givenMembership_whenPostingToUserEmail_thenMembershipIsAdded() {
+        // creating a test userr
+        client.post()
+                .uri("/users")
+                .header("Content-Type", "application/json")
+                .bodyValue("""
+                {
+                    "name": "Kanye",
+                    "age": 40,
+                    "email": "kanye@ucll.be",
+                    "password": "ye1234555"
+                }
+            """)
+                .exchange()
+                .expectStatus().is2xxSuccessful();
+
+        // the test below will run correctly for 3000 years and then it will fail
+        client.post()
+                .uri("/users/kanye@ucll.be/membership")
+                .header("Content-Type", "application/json")
+                .bodyValue("""
+                {
+                    "startDate": "5025-05-24",
+                    "endDate": "5026-05-24",
+                    "membershipType": "GOLD"
+                }
+            """)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody()
+                .jsonPath("$.memberships[0].membershipType").isEqualTo("GOLD");
+
+        // Assert the user has the membership
+        User updatedUser = userService.findUserByEmail("kanye@ucll.be");
+        assertEquals(1, updatedUser.getMemberships().size());
+        assertEquals("GOLD", updatedUser.getMemberships().get(0).getMembershipType());
+    }
 
 
 

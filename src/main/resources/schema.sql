@@ -1,6 +1,8 @@
+DROP TABLE IF EXISTS membership;
+DROP TABLE IF EXISTS publication;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS profiles;
-DROP TABLE IF EXISTS publication;
+
 
 
 CREATE TABLE profiles (
@@ -9,6 +11,7 @@ CREATE TABLE profiles (
                           location VARCHAR(255) NOT NULL,
                           interests VARCHAR(255) NOT NULL
 );
+
 CREATE TABLE users (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                        name VARCHAR(25),
@@ -17,6 +20,15 @@ CREATE TABLE users (
                        password VARCHAR(25),
     profile_id BIGINT,
     FOREIGN KEY(profile_id) REFERENCES profiles
+);
+
+CREATE TABLE membership (
+                            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                            start_date DATE NOT NULL,
+                            end_date DATE NOT NULL,
+                            membership_type VARCHAR(10),
+                            user_id BIGINT NOT NULL,
+                            CONSTRAINT fk_membership_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE publication (

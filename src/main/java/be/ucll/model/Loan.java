@@ -74,6 +74,7 @@ public class Loan {
     }
 
     public boolean isReturned() {
+        // will probably have to change this
         if (!isReturned && LocalDate.now().isAfter(endDate)) {
             this.isReturned = true;
         }

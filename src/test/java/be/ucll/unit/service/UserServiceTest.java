@@ -1,12 +1,11 @@
 package be.ucll.unit.service;
 
+import be.ucll.model.Membership;
 import be.ucll.model.Profile;
 import be.ucll.model.User;
-import be.ucll.repository.LoanRepository;
-import be.ucll.repository.ProfileRepository;
-import be.ucll.repository.PublicationRepository;
-import be.ucll.repository.UserRepository;
+import be.ucll.repository.*;
 import be.ucll.service.UserService;
+import be.ucll.unit.repository.MembershipRepositoryStub;
 import be.ucll.unit.repository.ProfileRepositoryStub;
 import be.ucll.unit.repository.PublicationRepositoryStub;
 import be.ucll.unit.repository.UserRepositoryStub;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +22,8 @@ import static org.mockito.Mockito.*;
 public class UserServiceTest {
 
     private UserService userService;
+    private MembershipRepositoryStub membershipRepository;
+
 
 
     @BeforeEach
@@ -29,7 +31,10 @@ public class UserServiceTest {
         UserRepository userRepository = new UserRepositoryStub();
         LoanRepository loanRepository = new LoanRepository();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
-        userService = new UserService(userRepository,loanRepository,profileRepository);
+        membershipRepository = new MembershipRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);
+
+
     }
 
 
@@ -108,7 +113,8 @@ public class UserServiceTest {
         UserRepository userRepository = mock(UserRepository.class);
         LoanRepository loanRepository = mock(LoanRepository.class);
         ProfileRepository profileRepository = new ProfileRepositoryStub();
-        userService = new UserService(userRepository,loanRepository,profileRepository);
+        MembershipRepository membershipRepository = new MembershipRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);
 
         String email = "john.doe@example.com";
         User existingUser = new User("John Doe", 30, email, "password123");
@@ -154,7 +160,8 @@ public class UserServiceTest {
         PublicationRepository publicationRepository = new PublicationRepositoryStub();
         LoanRepository loanRepository = new LoanRepository();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
-        userService = new UserService(userRepository,loanRepository,profileRepository);
+        MembershipRepository membershipRepository = new MembershipRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);
 
         List<User> adults = userService.getAllAdultUsers();
 
@@ -172,7 +179,8 @@ public class UserServiceTest {
         PublicationRepository publicationRepository = new PublicationRepositoryStub();
         LoanRepository loanRepository = new LoanRepository();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
-        userService = new UserService(userRepository,loanRepository,profileRepository);
+        MembershipRepository membershipRepository = new MembershipRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);
 
         List<User> users = userService.getUsersBetweenAges(100, 150);
 
@@ -311,7 +319,8 @@ public class UserServiceTest {
         userRepository.deleteAll();
         LoanRepository loanRepository = new LoanRepository();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
-        userService = new UserService(userRepository,loanRepository,profileRepository);
+        MembershipRepository membershipRepository = new MembershipRepositoryStub();
+        userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);
 
         Exception exception = assertThrows(RuntimeException.class, () ->
                 userService.getOldestUser()
@@ -386,7 +395,41 @@ public class UserServiceTest {
         assertEquals("No users found with interest in karate and older than 20", ex.getMessage());
     }
 
+// story 27
 
+    // happy - soo much time spe,t here fixing errros
+
+    @Test
+    void givenExistingUserEmailAndValidMembership_whenAddingMembership_thenMembershipIsAddedToUser() {
+        Membership membership = new Membership(
+                LocalDate.now(),
+                LocalDate.now().plusYears(1),
+                "GOLD"
+        );
+        User result = userService.addMembership("21.savage@ucll.be", membership);
+
+        assertEquals(1, result.getMemberships().size());
+        assertTrue(result.getMemberships().contains(membership));
+        assertTrue(membershipRepository.findAll().contains(membership));
+    }
+
+    // unhappy
+    @Test
+    void givenNonExistingUserEmail_whenAddingMembership_thenThrowsUserDoesNotExistException() {
+        // Given
+        Membership membership = new Membership(
+                LocalDate.now(),
+                LocalDate.now().plusYears(1),
+                "SILVER"
+        );
+
+        // When & Then
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.addMembership("nonexistent@example.com", membership);
+        });
+
+        assertEquals("User does not exist.", exception.getMessage());
+    }
 
 
 

@@ -4,6 +4,7 @@ import be.ucll.model.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -12,11 +13,13 @@ public class DbInitializer {
     private final UserRepository userRepository;
     private  final ProfileRepository profileRepository;
     private final PublicationRepository publicationRepository;
+    private final MembershipRepository membershipRepository;
 
-    public DbInitializer(UserRepository userRepository, ProfileRepository profileRepository, PublicationRepository publicationRepository) {
+    public DbInitializer(UserRepository userRepository, ProfileRepository profileRepository, PublicationRepository publicationRepository, MembershipRepository membershipRepository) {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
         this.publicationRepository = publicationRepository;
+        this.membershipRepository = membershipRepository;
     }
 
     @PostConstruct
@@ -45,6 +48,18 @@ public class DbInitializer {
                 new User("23Savage", 25, "23.savage@ucll.be", "john1234", profile23Savage)
         );
         userRepository.saveAll(users);
+        User user22 = userRepository.findUserByEmail("22.savage@ucll.be");
+        if(user22 != null) {
+            Membership membership2 = new Membership(
+                    LocalDate.now(),
+                    LocalDate.now().plusYears(1),
+                    "SILVER"
+            );
+            membership2.setUser(user22);
+            user22.addMembership(membership2);
+            membershipRepository.save(membership2);
+            userRepository.save(user22);
+        }
 
 
         // Save books

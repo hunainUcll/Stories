@@ -1,5 +1,6 @@
 package be.ucll.unit.model;
 
+import be.ucll.model.Membership;
 import be.ucll.model.Profile;
 import be.ucll.model.User;
 import jakarta.validation.*;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -190,6 +192,48 @@ public class UserTest {
         });
 
         assertEquals("User must be at least 18 year old to have a profile.", exception.getMessage());
+    }
+
+    // story 27
+    // happy
+    @Test
+    void givenValidMembership_whenAddingToUser_thenMembershipIsAdded() {
+        User user = new User("John Doe", 30, "john@example.com", "secret123");
+        Membership membership = new Membership(LocalDate.now(), LocalDate.now().plusYears(1), "GOLD");
+
+        user.addMembership(membership);
+
+        assertEquals(1, user.getMemberships().size());
+        assertTrue(user.getMemberships().contains(membership));
+        assertEquals(user, membership.getUser());
+    }
+    @Test
+    void givenValidMembership_whenAddMembershipCalled_thenUserIsSetAndMembershipStored() {
+        User user = new User("Alice", 22, "alice@ucll.be", "pass123");
+        Membership membership = new Membership(LocalDate.now(), LocalDate.now().plusYears(1), "BRONZE");
+
+        user.addMembership(membership);
+
+        assertEquals(1, user.getMemberships().size());
+        assertSame(user, membership.getUser());
+        assertEquals(membership, user.getMemberships().get(0));
+    }
+
+    // unhappyyyyy
+    @Test
+    void givenOverlappingMembership_whenAddingToUser_thenThrowsRuntimeException() {
+        User user = new User("Jane Smith", 28, "jane@example.com", "password");
+
+        Membership first = new Membership(LocalDate.of(2025, 1, 1), LocalDate.of(2026, 1, 1), "SILVER");
+        user.addMembership(first);
+
+        Membership overlapping = new Membership(LocalDate.of(2025, 6, 1), LocalDate.of(2026, 6, 1), "GOLD");
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+            user.addMembership(overlapping);
+        });
+
+        assertEquals("User has already a membership on that date.", ex.getMessage());
     }
 
 
