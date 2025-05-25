@@ -89,7 +89,7 @@ public class DbInitializer {
         Publication pub3 = magazines.get(0); //TIME
 
         if (user1 != null && user2 != null) {
-            Loan loan1 = new Loan(user1, List.of(pub1), LocalDate.of(2025, 5, 8));
+            Loan loan1 = new Loan(user1, List.of(pub1), LocalDate.of(2025, 5, 24));
             Loan loan2 = new Loan(user2, List.of(pub2), LocalDate.of(2025, 4, 25));
             Loan loan3 = new Loan(user3, List.of(pub3), LocalDate.of(2025, 5, 25)); // this lone should be active for a while
 

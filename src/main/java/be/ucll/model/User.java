@@ -124,4 +124,13 @@ public class User {
     public List<Membership> getMemberships() {
         return memberships;
     }
+
+    public Membership getActiveMembershipOnDate(LocalDate returnDate) {
+        for (Membership membership : memberships){
+            if(returnDate.isAfter(membership.getStartDate()) && returnDate.isBefore(membership.getEndDate())){
+                return membership;
+            }
+        }
+        return null;
+    }
 }

@@ -89,7 +89,7 @@ public class UserService {
             if (!userRepository.existsUserByEmail(email)) {
                 throw new RuntimeException("User does not exist");
             }
-            List<Loan> activeLoans = loanRepository.findAllByUserEmailAndIsReturnedFalseAndEndDateAfter(email, LocalDate.now());
+            List<Loan> activeLoans = loanRepository.findAllByUserEmailAndIsReturnedFalseAndEndDateAfter(email,LocalDate.now());
             if (!activeLoans.isEmpty()) {
                 throw new RuntimeException("User has active loans.");
             }

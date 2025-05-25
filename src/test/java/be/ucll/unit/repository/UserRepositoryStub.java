@@ -1,6 +1,5 @@
 package be.ucll.unit.repository;
 
-import be.ucll.model.Profile;
 import be.ucll.model.User;
 import be.ucll.repository.UserRepository;
 import org.springframework.data.domain.Example;
@@ -8,35 +7,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
-
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class UserRepositoryStub implements UserRepository {
 
-
-    private List<User> users = new ArrayList<>(List.of(
-            new User("21Savage", 25, "21.savage@ucll.be", "john1234"),
-            new User("Jane Toe", 30, "jane.toe@ucll.be", "jane1234"),
-            new User("Jack Doe", 5, "jack.doe@ucll.be", "jack1234"),
-            new User("Sarah Doe", 4, "sarah.doe@ucll.be", "sarah1234"),
-            new User("Birgit Doe", 18, "birgit.doe@ucll.be", "birgit1234"),
-            new User("22Savage", 25, "22.savage@ucll.be", "john1234", new Profile(
-                    "Aspiring rapper with a love for tech.",
-                    "Antwerp",
-                    "Music, rapping, Basketball"
-            )),
-            new User("23Savage", 25, "23.savage@ucll.be", "john1234", new Profile(
-                    "Aspiring rapper with a love for activities.",
-                    "Brussels",
-                    "Smoking, rapping, Coding"
-            ))
-    ));
+    private List<User> users = new ArrayList<>();
 
     @Override
     public List<User> findAll() {
         return users;
+    }
+
+    @Override public <S extends User> List<S> saveAll(Iterable<S> entities) {
+        entities.forEach(users::add);
+        return (List<S>) users;
     }
 
     @Override
@@ -183,10 +168,6 @@ public class UserRepositoryStub implements UserRepository {
         users.clear();
     }
 
-    @Override public <S extends User> List<S> saveAll(Iterable<S> entities) {
-        entities.forEach(users::add);
-        return (List<S>) users;
-    }
 
     @Override public List<User> findAllById(Iterable<Long> longs) {
         throw new UnsupportedOperationException();

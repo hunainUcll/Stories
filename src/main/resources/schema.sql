@@ -53,6 +53,7 @@ CREATE TABLE loan (
                       start_date DATE NOT NULL,
                       end_date DATE,
                       is_returned BOOLEAN,
+                      price DOUBLE,
                       FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

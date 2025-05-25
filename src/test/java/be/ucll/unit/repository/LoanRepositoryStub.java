@@ -1,9 +1,6 @@
 package be.ucll.unit.repository;
 
-import be.ucll.model.Book;
 import be.ucll.model.Loan;
-import be.ucll.model.Publication;
-import be.ucll.model.User;
 import be.ucll.repository.LoanRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -23,26 +20,7 @@ public class LoanRepositoryStub implements LoanRepository {
     private List<Loan> loans;
 
     public LoanRepositoryStub() {
-        // Hardcoded Users
-        User user1 = new User("21Savage", 25, "21.savage@ucll.be", "john1234");
-        User user2 = new User("Jane Toe", 30, "jane.toe@ucll.be", "jane1234");
-
-        // Hardcoded Publications
-        Publication pub1 = new Book("Harry Potter", "J.K. Rowling", "978-0-545-01022-1", 2001, 5);
-        Publication pub2 = new Book("Potter", "J.K. Rowling", "978-0-545-01032-1", 2001, 5);
-
-        // Assign Publications
-        List<Publication> publications1 = new ArrayList<>();
-        publications1.add(pub1); // For user1
-
-        List<Publication> publications2 = new ArrayList<>();
-        publications2.add(pub2); // For user2
-
-        // Create Loans
-        loans = new ArrayList<>(List.of(
-                new Loan(user1, publications1, LocalDate.of(2025, 5, 8)),
-                new Loan(user2, publications2, LocalDate.of(2025, 4, 15))
-        ));
+        loans = new ArrayList<>();
     }
 
     public List<Loan> getAllLoans() {
@@ -75,6 +53,24 @@ public class LoanRepositoryStub implements LoanRepository {
     }
 
     @Override
+    public Loan findLoanByUserEmailAndEndDateAfter(String userEmail, LocalDate endDateAfter) {
+        return loans.stream()
+                .filter(loan -> loan.getUser().getEmail().equals(userEmail))
+                .filter(loan -> loan.getEndDate() != null && loan.getEndDate().isAfter(endDateAfter))
+                .findFirst()
+                .orElse(null);
+    }
+
+
+    @Override
+    public List<Loan> findAllByUserEmailAndIsReturnedFalse(String userEmail) {
+        return loans.stream()
+                .filter(loan -> loan.getUser().getEmail().equals(userEmail))
+                .filter(loan -> !loan.isReturned() && loan.getEndDate() != null)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Loan> findAllByUserEmail(String email) {
         return loans.stream()
                 .filter(loan -> loan.getUser().getEmail().equals(email))
@@ -85,6 +81,13 @@ public class LoanRepositoryStub implements LoanRepository {
     public void deleteAllByUserEmail(String email) {
         loans.removeIf(loan -> loan.getUser().getEmail().equals(email));
     }
+
+    @Override
+    public <S extends Loan> S save(S loan) {
+        loans.add(loan);
+        return loan;
+    }
+
 
 
     @Override
@@ -114,7 +117,6 @@ public class LoanRepositoryStub implements LoanRepository {
 
     @Override
     public void deleteAllInBatch() {
-
     }
 
     @Override
@@ -167,10 +169,6 @@ public class LoanRepositoryStub implements LoanRepository {
         return null;
     }
 
-    @Override
-    public <S extends Loan> S save(S entity) {
-        return null;
-    }
 
     @Override
     public <S extends Loan> List<S> saveAll(Iterable<S> entities) {

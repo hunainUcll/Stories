@@ -1,8 +1,6 @@
 package be.ucll.unit.service;
 
-import be.ucll.model.Membership;
-import be.ucll.model.Profile;
-import be.ucll.model.User;
+import be.ucll.model.*;
 import be.ucll.repository.*;
 import be.ucll.service.UserService;
 import be.ucll.unit.repository.*;
@@ -20,17 +18,74 @@ public class UserServiceTest {
 
     private UserService userService;
     private MembershipRepositoryStub membershipRepository;
+    private UserRepository userRepository;
+    private PublicationRepository publicationRepository;
 
 
 
     @BeforeEach
     void setUp() {
-        UserRepository userRepository = new UserRepositoryStub();
-        LoanRepository loanRepository = new LoanRepositoryStub();
-        ProfileRepository profileRepository = new ProfileRepositoryStub();
+        userRepository = new UserRepositoryStub();
+        LoanRepositoryStub loanRepository = new LoanRepositoryStub();
+        ProfileRepositoryStub profileRepository = new ProfileRepositoryStub();
         membershipRepository = new MembershipRepositoryStub();
-        userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);
+        publicationRepository = new PublicationRepositoryStub();
 
+        userService = new UserService(userRepository, loanRepository, profileRepository, membershipRepository);
+
+        // Add sample users
+        User user1 = new User("21Savage", 25, "21.savage@ucll.be", "john1234");
+        User user2 = new User("Jane Toe", 30, "jane.toe@ucll.be", "jane1234");
+        User user3 = new User("Jack Doe", 30, "jack.doe@ucll.be", "jack1234");
+        User user4 = new User("Sarah Doe", 4, "sarah.doe@ucll.be", "sarah1234");
+        User user5 = new User("Birgit Doe", 18, "birgit.doe@ucll.be", "birgit1234");
+
+        User user6 = new User("22Savage", 25, "22.savage@ucll.be", "john1234", new Profile(
+                "Aspiring rapper with a love for tech.",
+                "Antwerp",
+                "Music, rapping, Basketball"
+        ));
+
+        User user7 = new User("23Savage", 25, "23.savage@ucll.be", "john1234", new Profile(
+                "Aspiring rapper with a love for activities.",
+                "Brussels",
+                "Smoking, rapping, Coding"
+        ));
+
+        for (User user : List.of(user1, user2, user3, user4, user5, user6, user7)) {
+            userRepository.save(user);
+        }
+
+        // --- PUBLICATIONS ---
+        Book book1 = new Book("Harry Potter", "J.K. Rowling", "978-0-545-01022-1", 2001, 5);
+        book1.setId(1L);
+        Book book2 = new Book("Potter", "J.K. Rowling", "978-0-545-01032-1", 2001, 5);
+        book2.setId(2L);
+        Book book3 = new Book("Potterrrr", "J.K. Rowling", "978-0-545-01032-2", 2001, 9);
+        book3.setId(3L);
+        publicationRepository.save(book1);
+        publicationRepository.save(book2);
+        publicationRepository.save(book3);
+
+        Magazine mag1 = new Magazine("Time", "John Doe", "1234-5678", 2022, 7);
+        mag1.setId(4L);
+        Magazine mag2 = new Magazine("TimeLess", "Jones Doe", "1234-5698", 2022, 23);
+        mag2.setId(5L);
+        Magazine mag3 = new Magazine("Timelessssss", "John Doe", "1234-5678", 2022, 0);
+        mag3.setId(6L);
+        publicationRepository.save(mag1);
+        publicationRepository.save(mag2);
+        publicationRepository.save(mag3);
+
+        // --- LOANS ---
+        Loan loan1 = new Loan(user1, List.of(book1), LocalDate.of(2025, 5, 24)); // active
+        Loan loan2 = new Loan(user2, List.of(book2), LocalDate.of(2025, 4, 15)); // inactive (assume returned)
+        Loan loan3 = new Loan(user3, List.of(book3), LocalDate.of(2025, 5, 23)); // active but returned
+        loan3.setReturned(true);
+
+        loanRepository.save(loan1);
+        loanRepository.save(loan2);
+        loanRepository.save(loan3);
 
     }
 
@@ -49,7 +104,7 @@ public class UserServiceTest {
         List<User> users = userService.getUsersBetweenAges(18, 30);
 
         assertNotNull(users);
-        assertEquals(5, users.size());
+        assertEquals(6, users.size());
         assertTrue(users.stream().allMatch(user -> user.getAge() >= 18 && user.getAge() <= 30));
     }
 

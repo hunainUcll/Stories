@@ -133,6 +133,11 @@ public class UserRestController {
     public Loan setLoanForUser(@PathVariable String email, @PathVariable LocalDate startDate,@RequestBody List<Long> publicationIds){
         return loanService.setLoanForUser(email,startDate,publicationIds);
     }
+    // story 31
+    @PutMapping("/{email}/loans/return/{returnDate}")
+    public Loan ReturnLoanForUser(@PathVariable String email,@PathVariable LocalDate returnDate){
+        return loanService.returnLoansForUser(email,returnDate);
+    }
 
 
 

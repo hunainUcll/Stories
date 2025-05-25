@@ -151,8 +151,8 @@ public class UserIntegrationTest {
                         "\"isbn\":\"978-0-545-01022-1\"" +
                         "}" +
                         "]," +
-                        "\"startDate\":\"2025-05-08\"," +
-                        "\"endDate\":\"2025-06-07\"," + // and this according to todays date + 19
+                        "\"startDate\":\"2025-05-24\"," +
+                        "\"endDate\":\"2025-06-23\"," + // and this according to todays date + 30
                         "\"returned\":false" +
                         "}" +
                         "]");
@@ -326,6 +326,46 @@ public class UserIntegrationTest {
                 .jsonPath("$.publications.length()").isEqualTo(publicationIds.size());
 
     }
+
+
+    @Test
+    public void givenActiveLoan_whenReturningLoan_thenLoanIsMarkedReturnedAndUpdated() {
+
+        client.put()
+                .uri("/users/21.savage@ucll.be/loans/return/2025-05-25")
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody()
+                .json("""
+                {
+                    "user": {
+                        "name": "21Savage",
+                        "age": 25,
+                        "email": "21.savage@ucll.be",
+                        "password": "john1234",
+                        "profile": null,
+                        "memberships": []
+                    },
+                    "publications": [
+                        {
+                            "title": "Harry Potter",
+                            "publicationYear": 2001,
+                            "availableCopies": 6,
+                            "id": 1,
+                            "type": "book",
+                            "author": "J.K. Rowling",
+                            "isbn": "978-0-545-01022-1"
+                        }
+                    ],
+                    "startDate": "2025-05-24",
+                    "endDate": "2025-05-25",
+                    "price": 1.0,
+                    "returned": true
+                }
+            """);
+             // expecting only 1 BECAUSE CHARGED FOR ONE DAY WITHOUT MEMBERSHIP
+    }
+
 
 
 

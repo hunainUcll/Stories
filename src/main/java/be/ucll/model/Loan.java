@@ -25,8 +25,6 @@ public class Loan {
     @NotNull(message = "Start date is required.")
     @PastOrPresent(message = "Start date cannot be in the future")
     private LocalDate startDate;
-
-
     private LocalDate endDate;
 
     private Boolean isReturned;
@@ -34,6 +32,8 @@ public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private double price;
 
     public Loan(User user, List<Publication> publications, LocalDate startDate) {
         setUser(user);
@@ -72,18 +72,14 @@ public class Loan {
             throw new RuntimeException("List is required.");
         }
 
-        // First, check if all publications have available copies.
         for (Publication publication : publications) {
             if (publication.getAvailableCopies() == 0) {
                 // If one publication has no available copies, throw an exception and stop further processing.
                 throw new RuntimeException("Unable to lend publication. No copies available for " + publication.getTitle() + ".");
             }
         }
-
-        // Now that we've validated, set the publications
         this.publications = publications;
 
-        // Now, decrement the available copies for each publication (since all are valid)
         for (Publication publication : publications) {
             publication.lendPublications(); // Decrease the available copies only after validation
         }
@@ -104,15 +100,25 @@ public class Loan {
         if (isReturned) {
             throw new RuntimeException("Publications have already been returned.");
         }
-
         for (Publication publication : publications) {
             publication.returnPublication();
         }
-
-        isReturned = true; // Mark loan as returned
+        isReturned = true;
     }
 
-    public Long getId() {
-        return this.id;
+
+    public void setReturned(boolean b) {
+        this.isReturned = b;
+    }
+
+    public void setEndDate(LocalDate returnDate) {
+        this.endDate = returnDate;
+    }
+
+    public void setPrice(double totalPrice) {
+        this.price = totalPrice;
+    }
+    public double getPrice() {
+        return price;
     }
 }

@@ -19,15 +19,40 @@ public class PublicationServiceTest {
 
     @BeforeEach
     void setUp() {
-        PublicationRepository repo = new PublicationRepositoryStub();
-        service = new PublicationService(repo);
+        PublicationRepository publicationRepository = new PublicationRepositoryStub();
+        service = new PublicationService(publicationRepository);
+
+        // Add sample books
+        Book book1 = new Book("Harry Potter", "J.K. Rowling", "978-0-545-01022-1", 2001, 5);
+        book1.setId(1L);
+        Book book2 = new Book("Potter", "J.K. Rowling", "978-0-545-01032-1", 2001, 5);
+        book2.setId(2L);
+        Book book3 = new Book("Potterrrr", "J.K. Rowling", "978-0-545-01032-2", 2001, 9);
+        book3.setId(3L);
+
+        // Add sample magazines
+        Magazine mag1 = new Magazine("Time", "John Doe", "1234-5678", 2022, 7);
+        mag1.setId(4L);
+        Magazine mag2 = new Magazine("TimeLess", "Jones Doe", "1234-5698", 2022, 23);
+        mag2.setId(5L);
+        Magazine mag3 = new Magazine("Timelessssss", "John Doe", "1234-5678", 2022, 0);
+        mag3.setId(6L);
+
+        // Save publications
+        publicationRepository.save(book1);
+        publicationRepository.save(book2);
+        publicationRepository.save(book3);
+        publicationRepository.save(mag1);
+        publicationRepository.save(mag2);
+        publicationRepository.save(mag3);
     }
+
 
     // all of these should be considered happy tests
     @Test
     void givenNoFilters_whenGettingPublications_thenReturnAll() {
         List<Publication> results = service.findPublicationsByTitleAndType(null,null);
-        assertEquals(5,results.size());
+        assertEquals(6,results.size());
 
     }
 
@@ -63,7 +88,7 @@ public class PublicationServiceTest {
     @Test
     void whenGetAllPublications_thenReturnsAll() {
         List<Publication> results = service.getAllPublications();
-        assertEquals(5, results.size());  // Assuming 2 books and 2 magazines
+        assertEquals(6, results.size());  // Assuming 2 books and 2 magazines
     }
 
     @Test
@@ -85,7 +110,7 @@ public class PublicationServiceTest {
     @Test
     void givenTypeFilter_whenGettingBooks_thenReturnsOnlyBooks() {
         List<Publication> results = service.findPublicationsByTitleAndType(null, "Book");
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
         assertTrue(results.get(0) instanceof Book);
     }
 
