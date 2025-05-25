@@ -25,8 +25,6 @@ public class PublicationIntegrationTest {
 
     @Test
     public void givenPublications_whenInvokingGetPublicationsByTitleAndType_thenCorrectPublicationsAreReturned() {
-        // Create some test publications first (make sure they're added to the repository or mock service)
-        // For now, assuming they are pre-populated in the repository or set by your service.
 
         client.get()
                 .uri("/publications?title=Harry Potter&type=book")
@@ -53,8 +51,6 @@ public class PublicationIntegrationTest {
     // lol
     @Test
     public void givenPublications_whenInvokingGetPublicationsByStock_thenCorrectPublicationsAreReturned() {
-        // Reset data or make sure some copies are loaned out if needed
-        // Here, we are expecting publications with at least 6 available copies after loaning out a few
 
         client.get()
                 .uri("/publications/stock/6")  // Expecting publications with at least 6 availableCopies

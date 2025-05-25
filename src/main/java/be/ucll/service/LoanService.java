@@ -137,12 +137,10 @@ public class LoanService {
 
         double totalPrice = basePrice + lateFine;
 
-        // Update loan
         activeLoan.setReturned(true);
         activeLoan.setEndDate(returnDate);
         activeLoan.setPrice(totalPrice);
 
-        // Update available copies of each publication
         for (Publication pub : activeLoan.getPublications()) {
             pub.setAvailableCopies(pub.getAvailableCopies() + 1);
             publicationRepository.save(pub);

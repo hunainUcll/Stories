@@ -293,7 +293,6 @@ public class UserIntegrationTest {
                 .expectBody()
                 .jsonPath("$.memberships[0].membershipType").isEqualTo("GOLD");
 
-        // Assert the user has the membership
         User updatedUser = userService.findUserByEmail("kanye@ucll.be");
         assertEquals(1, updatedUser.getMemberships().size());
         assertEquals("GOLD", updatedUser.getMemberships().get(0).getMembershipType());

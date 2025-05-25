@@ -49,7 +49,6 @@ public class Membership {
         setFreeLoans(freeLoans);
     }
 
-    // Getter and setter methods
 
     public Long getId() {
         return id;

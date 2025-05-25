@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -52,12 +53,25 @@ public class UserService {
     }
 
     public List<User> getUsersByName(String name) {
-        List<User> foundUsers = userRepository.findUsersByName(name);
+
+        List<User> foundUsers = new ArrayList<>();
+
+        if(name == null){
+            foundUsers.addAll(userRepository.findAll());
+        }
+        else if(name.isEmpty()){
+            foundUsers.addAll(userRepository.findAll());
+        }
+        else{
+            foundUsers.addAll(userRepository.findUsersByName(name));
+        }
+
         if (foundUsers.isEmpty()) {
             throw new RuntimeException("No users found with the specified name.");
         }
         return foundUsers;
     }
+
     // not in project making this to double tap weather teh user is actually gone story 17
     public boolean userExists(String email){
         return userRepository.existsUserByEmail(email);
