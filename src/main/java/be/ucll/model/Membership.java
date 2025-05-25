@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "membership")
@@ -67,8 +68,11 @@ public class Membership {
     }
 
     public void setEndDate(LocalDate endDate) {
-        if (this.startDate != null && Period.between(this.startDate, endDate).getYears() < 1) {
-            throw new IllegalArgumentException("End date must be 1 year after the start date.");
+        if (this.startDate != null) {
+            long daysBetween = ChronoUnit.DAYS.between(this.startDate, endDate);
+            if (daysBetween < 365) {
+                throw new RuntimeException("End date must be 1 year after the start date.");
+            }
         }
         this.endDate = endDate;
     }

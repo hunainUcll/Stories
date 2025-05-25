@@ -72,7 +72,7 @@ public class MembershipTest {
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = startDate.plusMonths(6);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+        Exception ex = assertThrows(RuntimeException.class, () -> {
             new Membership(startDate, endDate, "BRONZE",2);
         });
 

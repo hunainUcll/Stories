@@ -151,6 +151,13 @@ public class UserService {
     }
 
 
+    public Membership getMembershipByDate(String email, LocalDate date) {
+        User user = findUserByEmail(email);
+        if(user == null){throw new RuntimeException("User does not exist.");}
 
+        Membership membership = membershipRepository.findByUserEmailAndStartDateLessThanEqualAndEndDateGreaterThanEqual(email, date, date);
+        if(membership == null) {throw new RuntimeException("No membership found for user on date "+ date+".");}
+        return membership;
+    }
 }
 

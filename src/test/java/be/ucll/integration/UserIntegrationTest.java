@@ -366,6 +366,43 @@ public class UserIntegrationTest {
              // expecting only 1 BECAUSE CHARGED FOR ONE DAY WITHOUT MEMBERSHIP
     }
 
+    @Test
+    public void givenUser_whenAddMembership_thenGetMembershipByDate_returnsMembership() {
+        String membershipJson = """
+        {
+          "startDate": "2125-05-25",
+          "endDate": "2126-05-26",
+          "membershipType": "GOLD",
+          "freeLoans": 15
+        }
+    """;
+
+        // 1) Add membership
+        client.post()
+                .uri("/users/21.savage@ucll.be/membership")
+                .header("Content-Type", "application/json")
+                .bodyValue(membershipJson)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody()
+                .jsonPath("$.memberships[0].startDate").isEqualTo("2125-05-25")
+                .jsonPath("$.memberships[0].membershipType").isEqualTo("GOLD")
+                .jsonPath("$.memberships[0].freeLoans").isEqualTo(15);
+
+        // 2) Then fetch membership for date 2125-06-01
+        client.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/users/21.savage@ucll.be/membership")
+                        .queryParam("date", "2125-06-01")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.startDate").isEqualTo("2125-05-25")
+                .jsonPath("$.endDate").isEqualTo("2126-05-26")
+                .jsonPath("$.membershipType").isEqualTo("GOLD")
+                .jsonPath("$.freeLoans").isEqualTo(15);
+    }
 
 
 

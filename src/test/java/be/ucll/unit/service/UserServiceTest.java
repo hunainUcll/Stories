@@ -14,6 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+
 public class UserServiceTest {
 
     private UserService userService;
@@ -468,14 +469,12 @@ public class UserServiceTest {
     // unhappy
     @Test
     void givenNonExistingUserEmail_whenAddingMembership_thenThrowsUserDoesNotExistException() {
-        // Given
+
         Membership membership = new Membership(
                 LocalDate.now(),
                 LocalDate.now().plusYears(1),
                 "SILVER",8
         );
-
-        // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userService.addMembership("nonexistent@example.com", membership);
         });
@@ -483,14 +482,26 @@ public class UserServiceTest {
         assertEquals("User does not exist.", exception.getMessage());
     }
 
+    //story 33
+    @Test
+    void givenNonExistingUser_whenGetMembershipByDate_thenThrowsUserNotExist() {
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+            userService.getMembershipByDate("noone@ucll.be", LocalDate.of(2125, 6, 1));
+        });
+        assertEquals("User does not exist.", ex.getMessage());
+    }
 
+    @Test
+    void givenUserWithoutMembershipOnDate_whenGetMembershipByDate_thenThrowsNoMembershipFound() {
+        // Add a user without memberships on that date
+        User user = new User("Test User", 30, "test@ucll.be", "test123");
+        userRepository.save(user);
 
-
-
-
-
-
-
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+            userService.getMembershipByDate("test@ucll.be", LocalDate.of(2125, 6, 1));
+        });
+        assertEquals("No membership found for user on date 2125-06-01.", ex.getMessage());
+    }
 
 
 

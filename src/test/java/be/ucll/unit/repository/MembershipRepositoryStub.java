@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -174,4 +175,19 @@ public class MembershipRepositoryStub implements MembershipRepository {
     public Page<Membership> findAll(Pageable pageable) {
         return null;
     }
+
+    @Override
+    public Membership findByUserEmailAndStartDateLessThanEqualAndEndDateGreaterThanEqual(String email, LocalDate start, LocalDate end) {
+        return memberships.stream()
+                .filter(m -> m.getUser().getEmail().equals(email))
+                .filter(m -> !m.getStartDate().isAfter(start)) // startDate <= start
+                .filter(m -> {
+                    LocalDate membershipEnd = m.getEndDate();
+                    // If endDate is null, treat as ongoing (always valid)
+                    return membershipEnd == null || !membershipEnd.isBefore(end); // endDate >= end OR endDate is null
+                })
+                .findFirst()
+                .orElse(null);
+    }
+
 }

@@ -138,6 +138,12 @@ public class UserRestController {
     public Loan ReturnLoanForUser(@PathVariable String email,@PathVariable LocalDate returnDate){
         return loanService.returnLoansForUser(email,returnDate);
     }
+    // story 33
+    @GetMapping("/{email}/membership")
+    public Membership getMembershipByDate(@PathVariable String email, @RequestParam LocalDate date){
+        return userService.getMembershipByDate(email,date);
+
+    }
 
 
 
