@@ -401,7 +401,7 @@ public class UserServiceTest {
         Membership membership = new Membership(
                 LocalDate.now(),
                 LocalDate.now().plusYears(1),
-                "GOLD"
+                "GOLD",12
         );
         User result = userService.addMembership("21.savage@ucll.be", membership);
 
@@ -417,7 +417,7 @@ public class UserServiceTest {
         Membership membership = new Membership(
                 LocalDate.now(),
                 LocalDate.now().plusYears(1),
-                "SILVER"
+                "SILVER",8
         );
 
         // When & Then

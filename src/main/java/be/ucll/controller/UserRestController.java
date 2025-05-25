@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +128,11 @@ public class UserRestController {
         return userService.addMembership(email,membership);
     }
 
+    //story 30
+    @PostMapping("/{email}/loans/{startDate}")
+    public Loan setLoanForUser(@PathVariable String email, @PathVariable LocalDate startDate,@RequestBody List<Long> publicationIds){
+        return loanService.setLoanForUser(email,startDate,publicationIds);
+    }
 
 
 

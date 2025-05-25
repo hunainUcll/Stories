@@ -30,9 +30,11 @@ CREATE TABLE membership (
                             start_date DATE NOT NULL,
                             end_date DATE NOT NULL,
                             membership_type VARCHAR(10),
+                            free_loans INT NOT NULL,  -- ✅ Add this line
                             user_id BIGINT NOT NULL,
                             CONSTRAINT fk_membership_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
 
 CREATE TABLE publication (
                              id BIGINT AUTO_INCREMENT PRIMARY KEY,

@@ -35,7 +35,7 @@ public class MembershipTest {
         User user = new User("Test User", 25, "test@ucll.be", "password123");
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = startDate.plusYears(1);
-        Membership membership = new Membership(startDate, endDate, "GOLD");
+        Membership membership = new Membership(startDate, endDate, "GOLD",12);
         membership.setUser(user);
 
         Set<ConstraintViolation<Membership>> violations = validator.validate(membership);
@@ -45,7 +45,7 @@ public class MembershipTest {
     void givenValidMembership_thenGettersReturnCorrectValues() {
         LocalDate start = LocalDate.now();
         LocalDate end = start.plusYears(1);
-        Membership membership = new Membership(start, end, "BRONZE");
+        Membership membership = new Membership(start, end, "BRONZE",3);
         assertEquals(start, membership.getStartDate());
         assertEquals(end, membership.getEndDate());
         assertEquals("BRONZE", membership.getMembershipType());
@@ -58,7 +58,7 @@ public class MembershipTest {
         User user = new User("Test User", 25, "test@ucll.be", "password123");
         LocalDate startDate = LocalDate.now().minusDays(1);
         LocalDate endDate = startDate.plusYears(1);
-        Membership membership = new Membership(startDate, endDate, "SILVER");
+        Membership membership = new Membership(startDate, endDate, "SILVER",7);
 
         membership.setUser(user);
 
@@ -73,7 +73,7 @@ public class MembershipTest {
         LocalDate endDate = startDate.plusMonths(6);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            new Membership(startDate, endDate, "BRONZE");
+            new Membership(startDate, endDate, "BRONZE",2);
         });
 
         assertEquals("End date must be 1 year after the start date.", ex.getMessage());
@@ -85,7 +85,7 @@ public class MembershipTest {
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = startDate.plusYears(1);
 
-        Membership membership = new Membership(startDate, endDate, "copper");
+        Membership membership = new Membership(startDate, endDate, "copper",3);
         membership.setUser(user);
 
         Set<ConstraintViolation<Membership>> violations = validator.validate(membership);

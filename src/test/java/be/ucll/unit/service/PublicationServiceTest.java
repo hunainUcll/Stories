@@ -27,7 +27,7 @@ public class PublicationServiceTest {
     @Test
     void givenNoFilters_whenGettingPublications_thenReturnAll() {
         List<Publication> results = service.findPublicationsByTitleAndType(null,null);
-        assertEquals(4,results.size());
+        assertEquals(5,results.size());
 
     }
 
@@ -63,7 +63,7 @@ public class PublicationServiceTest {
     @Test
     void whenGetAllPublications_thenReturnsAll() {
         List<Publication> results = service.getAllPublications();
-        assertEquals(4, results.size());  // Assuming 2 books and 2 magazines
+        assertEquals(5, results.size());  // Assuming 2 books and 2 magazines
     }
 
     @Test
@@ -92,14 +92,14 @@ public class PublicationServiceTest {
     @Test
     void givenTypeFilter_whenGettingMagazines_thenReturnsOnlyMagazines() {
         List<Publication> results = service.findPublicationsByTitleAndType(null, "Magazine");
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
         assertInstanceOf(Magazine.class, results.get(0));
     }
 
     @Test
     void givenBothFilters_whenMatchingResultsExist_thenReturnsFilteredList() {
         List<Publication> results = service.findPublicationsByTitleAndType("Time", "Magazine");
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
         assertEquals("Time", results.get(0).getTitle());
     }
 

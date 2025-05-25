@@ -199,7 +199,7 @@ public class UserTest {
     @Test
     void givenValidMembership_whenAddingToUser_thenMembershipIsAdded() {
         User user = new User("John Doe", 30, "john@example.com", "secret123");
-        Membership membership = new Membership(LocalDate.now(), LocalDate.now().plusYears(1), "GOLD");
+        Membership membership = new Membership(LocalDate.now(), LocalDate.now().plusYears(1), "GOLD",12);
 
         user.addMembership(membership);
 
@@ -210,7 +210,7 @@ public class UserTest {
     @Test
     void givenValidMembership_whenAddMembershipCalled_thenUserIsSetAndMembershipStored() {
         User user = new User("Alice", 22, "alice@ucll.be", "pass123");
-        Membership membership = new Membership(LocalDate.now(), LocalDate.now().plusYears(1), "BRONZE");
+        Membership membership = new Membership(LocalDate.now(), LocalDate.now().plusYears(1), "BRONZE",2);
 
         user.addMembership(membership);
 
@@ -224,10 +224,10 @@ public class UserTest {
     void givenOverlappingMembership_whenAddingToUser_thenThrowsRuntimeException() {
         User user = new User("Jane Smith", 28, "jane@example.com", "password");
 
-        Membership first = new Membership(LocalDate.of(2025, 1, 1), LocalDate.of(2026, 1, 1), "SILVER");
+        Membership first = new Membership(LocalDate.of(2025, 1, 1), LocalDate.of(2026, 1, 1), "SILVER",8);
         user.addMembership(first);
 
-        Membership overlapping = new Membership(LocalDate.of(2025, 6, 1), LocalDate.of(2026, 6, 1), "GOLD");
+        Membership overlapping = new Membership(LocalDate.of(2025, 6, 1), LocalDate.of(2026, 6, 1), "GOLD",12);
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> {
             user.addMembership(overlapping);

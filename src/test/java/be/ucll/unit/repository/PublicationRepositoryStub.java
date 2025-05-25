@@ -23,15 +23,28 @@ public class PublicationRepositoryStub implements PublicationRepository {
     private List<Magazine> magazines;
 
     public PublicationRepositoryStub()  {
-        books = new ArrayList<>(List.of(
-                new Book("Harry Potter", "J.K. Rowling", "978-0-545-01022-1", 2001, 5),
-                new Book("Potter", "J.K. Rowling", "978-0-545-01032-1", 2001, 5)
-        ));
+        books = new ArrayList<>();
+        magazines = new ArrayList<>();
 
-        magazines = new ArrayList<>(List.of(
-                new Magazine("Time", "John Doe", "1234-5678", 2022, 7),
-                new Magazine("TimeLess", "Jones Doe", "1234-5698", 2022, 23)
-        ));
+        Book book1 = new Book("Harry Potter", "J.K. Rowling", "978-0-545-01022-1", 2001, 5);
+        book1.setId(1L);
+        Book book2 = new Book("Potter", "J.K. Rowling", "978-0-545-01032-1", 2001, 5);
+        book2.setId(2L);
+
+        books.add(book1);
+        books.add(book2);
+
+        Magazine mag1 = new Magazine("Time", "John Doe", "1234-5678", 2022, 7);
+        mag1.setId(3L);
+        Magazine mag2 = new Magazine("TimeLess", "Jones Doe", "1234-5698", 2022, 23);
+        mag2.setId(4L);
+        Magazine mag3 = new Magazine("Timelessssss", "John Doe", "1234-5678", 2022, 0);
+        mag3.setId(5L);
+
+
+        magazines.add(mag1);
+        magazines.add(mag2);
+        magazines.add(mag3);
     }
 
     public List<Publication> getAllPublications() {
@@ -71,6 +84,16 @@ public class PublicationRepositoryStub implements PublicationRepository {
         allPublications.addAll(magazines);
         return allPublications;
     }
+
+
+    @Override
+    public Optional<Publication> findById(Long id) {
+        return getAllPublications().stream()
+                .filter(pub -> pub.getId() != null && pub.getId().equals(id))
+                .findFirst();
+    }
+
+
 
     @Override
     public void flush() {
@@ -162,10 +185,6 @@ public class PublicationRepositoryStub implements PublicationRepository {
         return List.of();
     }
 
-    @Override
-    public Optional<Publication> findById(Long aLong) {
-        return Optional.empty();
-    }
 
     @Override
     public boolean existsById(Long aLong) {

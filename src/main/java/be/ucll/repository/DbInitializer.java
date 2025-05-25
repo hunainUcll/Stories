@@ -55,7 +55,8 @@ public class DbInitializer {
             Membership membership2 = new Membership(
                     LocalDate.now(),
                     LocalDate.now().plusYears(1),
-                    "SILVER"
+                    "SILVER",
+                    7
             );
             membership2.setUser(user22);
             user22.addMembership(membership2);

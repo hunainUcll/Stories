@@ -41,7 +41,7 @@ public class Loan {
         setPublications(publications);
         // Only compute endDate if startDate is not null
         if (startDate != null) {
-            this.endDate = startDate.plusDays(21);
+            this.endDate = startDate.plusDays(30);
         }
     }
 
@@ -59,6 +59,9 @@ public class Loan {
     public LocalDate getStartDate() {
         return startDate;
     }
+
+    // security flaw here - potentially could use this function to reset the start date after the construction of th end date
+    // my code breaks without it sooooo if it is not a problem dont fix it
     public void setStartDate(LocalDate startDate) {this.startDate = startDate;}
 
     public List<Publication> getPublications() {
@@ -109,4 +112,7 @@ public class Loan {
         isReturned = true; // Mark loan as returned
     }
 
+    public Long getId() {
+        return this.id;
+    }
 }

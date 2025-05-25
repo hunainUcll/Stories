@@ -18,6 +18,11 @@ public abstract class Publication {
     @PositiveOrZero(message = "Available copies must not be a negative number.")
     private int availableCopies;
 
+    // for unit testing purposes
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

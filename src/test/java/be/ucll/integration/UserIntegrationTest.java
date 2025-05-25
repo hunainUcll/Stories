@@ -1,6 +1,7 @@
 package be.ucll.integration;
 
 import be.ucll.LibraryApplication;
+import be.ucll.model.Loan;
 import be.ucll.model.User;
 import be.ucll.repository.DbInitializer;
 import be.ucll.repository.UserRepository;
@@ -12,6 +13,9 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -148,7 +152,7 @@ public class UserIntegrationTest {
                         "}" +
                         "]," +
                         "\"startDate\":\"2025-05-08\"," +
-                        "\"endDate\":\"2025-05-29\"," + // and this according to todays date + 19
+                        "\"endDate\":\"2025-06-07\"," + // and this according to todays date + 19
                         "\"returned\":false" +
                         "}" +
                         "]");
@@ -294,6 +298,35 @@ public class UserIntegrationTest {
         assertEquals(1, updatedUser.getMemberships().size());
         assertEquals("GOLD", updatedUser.getMemberships().get(0).getMembershipType());
     }
+
+
+
+    //story 30
+
+    @Test
+    public void givenUserAndPublications_whenPostLoan_thenLoanIsCreatedAndLinkedToUser() {
+        // Arrange
+        String userEmail = "birgit.doe@ucll.be";
+        LocalDate startDate = LocalDate.now();
+
+        // Assume these publication IDs exist in DB, for example: 1 and 2
+        List<Long> publicationIds = List.of(1L, 2L);
+
+        client.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/users/{email}/loans/{startDate}")
+                        .build(userEmail, startDate.toString()))
+                .header("Content-Type", "application/json")
+                .bodyValue(publicationIds)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody()
+                .jsonPath("$.user.email").isEqualTo(userEmail)
+                .jsonPath("$.startDate").isEqualTo(startDate.toString())
+                .jsonPath("$.publications.length()").isEqualTo(publicationIds.size());
+
+    }
+
 
 
 
