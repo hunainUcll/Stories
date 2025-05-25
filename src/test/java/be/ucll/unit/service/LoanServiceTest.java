@@ -7,6 +7,7 @@ import be.ucll.model.User;
 import be.ucll.repository.LoanRepository;
 import be.ucll.repository.PublicationRepository;
 import be.ucll.service.LoanService;
+import be.ucll.unit.repository.LoanRepositoryStub;
 import be.ucll.unit.repository.UserRepositoryStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ public class LoanServiceTest {
     void setUp() {
         userRepository = new UserRepositoryStub();
    //     publicationRepository = new PublicationRepository();
-       loanRepository = new LoanRepository();
+        loanRepository = new LoanRepositoryStub();
         loanService = new LoanService(loanRepository, userRepository);
     }
 

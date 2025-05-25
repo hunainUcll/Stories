@@ -1,17 +1,26 @@
 package be.ucll.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
+import be.ucll.model.User;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Entity
+@Table(name = "loan")
 public class Loan {
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     @NotNull(message = "User is required")
     private User user;
 
+    @ManyToMany
+    @JoinTable(name = "loan_publications",joinColumns = @JoinColumn(name = "loan_id"), inverseJoinColumns = @JoinColumn(name = "publication_id"))
     private List<Publication> publications;
+
 
     @NotNull(message = "Start date is required.")
     @PastOrPresent(message = "Start date cannot be in the future")
@@ -22,6 +31,10 @@ public class Loan {
 
     private Boolean isReturned;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     public Loan(User user, List<Publication> publications, LocalDate startDate) {
         setUser(user);
         setStartDate(startDate);
@@ -31,6 +44,8 @@ public class Loan {
             this.endDate = startDate.plusDays(21);
         }
     }
+
+    protected Loan() {}
 
     public User getUser() {
         return user;
@@ -75,9 +90,9 @@ public class Loan {
 
     public boolean isReturned() {
         // will probably have to change this
-        if (!isReturned && LocalDate.now().isAfter(endDate)) {
-            this.isReturned = true;
-        }
+        //if (!isReturned && LocalDate.now().isAfter(endDate)) {
+          //  this.isReturned = true;
+        //}
         return isReturned;
     }
 
@@ -93,6 +108,5 @@ public class Loan {
 
         isReturned = true; // Mark loan as returned
     }
-
 
 }

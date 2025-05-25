@@ -1,7 +1,10 @@
+DROP TABLE IF EXISTS loan_publications;
+DROP TABLE IF EXISTS loan;
 DROP TABLE IF EXISTS membership;
-DROP TABLE IF EXISTS publication;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS publication;
 DROP TABLE IF EXISTS profiles;
+
 
 
 
@@ -42,3 +45,21 @@ CREATE TABLE publication (
                              issn VARCHAR(255),
                              type VARCHAR(255) NOT NULL
 );
+CREATE TABLE loan (
+                      id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                      user_id BIGINT NOT NULL,
+                      start_date DATE NOT NULL,
+                      end_date DATE,
+                      is_returned BOOLEAN,
+                      FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE loan_publications (
+                                   loan_id BIGINT,
+                                   publication_id BIGINT,
+                                   PRIMARY KEY (loan_id, publication_id),
+                                   FOREIGN KEY (loan_id) REFERENCES loan(id),
+                                   FOREIGN KEY (publication_id) REFERENCES publication(id)
+);
+
+

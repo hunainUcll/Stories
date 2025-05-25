@@ -9,6 +9,8 @@ import be.ucll.repository.ProfileRepository;
 import be.ucll.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -87,14 +89,14 @@ public class UserService {
             if (!userRepository.existsUserByEmail(email)) {
                 throw new RuntimeException("User does not exist");
             }
-            List<Loan> activeLoans = loanRepository.findLoanByUser(email, true);
+            List<Loan> activeLoans = loanRepository.findAllByUserEmailAndIsReturnedFalseAndEndDateAfter(email, LocalDate.now());
             if (!activeLoans.isEmpty()) {
                 throw new RuntimeException("User has active loans.");
             }
 
             User user = userRepository.findUserByEmail(email);
 
-            loanRepository.deleteUserLoans(email);
+            loanRepository.deleteAllByUserEmail(email);
             userRepository.delete(user);
             return "User successfully deleted";
         }

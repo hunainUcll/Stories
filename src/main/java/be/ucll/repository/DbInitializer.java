@@ -14,12 +14,14 @@ public class DbInitializer {
     private  final ProfileRepository profileRepository;
     private final PublicationRepository publicationRepository;
     private final MembershipRepository membershipRepository;
+    private final LoanRepository loanRepository;
 
-    public DbInitializer(UserRepository userRepository, ProfileRepository profileRepository, PublicationRepository publicationRepository, MembershipRepository membershipRepository) {
+    public DbInitializer(UserRepository userRepository, ProfileRepository profileRepository, PublicationRepository publicationRepository, MembershipRepository membershipRepository, LoanRepository loanRepository) {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
         this.publicationRepository = publicationRepository;
         this.membershipRepository = membershipRepository;
+        this.loanRepository = loanRepository;
     }
 
     @PostConstruct
@@ -76,6 +78,23 @@ public class DbInitializer {
 
         publicationRepository.saveAll(books);
         publicationRepository.saveAll(magazines);
+
+        User user1 = userRepository.findUserByEmail("21.savage@ucll.be");
+        User user2 = userRepository.findUserByEmail("jane.toe@ucll.be");
+        User user3 = userRepository.findUserByEmail("23.savage@ucll.be");
+
+        Publication pub1 = books.get(0); // harry Potter
+        Publication pub2 = books.get(1); // Potter
+        Publication pub3 = magazines.get(0); //TIME
+
+        if (user1 != null && user2 != null) {
+            Loan loan1 = new Loan(user1, List.of(pub1), LocalDate.of(2025, 5, 8));
+            Loan loan2 = new Loan(user2, List.of(pub2), LocalDate.of(2025, 4, 25));
+            Loan loan3 = new Loan(user3, List.of(pub3), LocalDate.of(2025, 5, 25)); // this lone should be active for a while
+
+            loanRepository.saveAll(List.of(loan1,loan2,loan3));
+        }
+
 
     }
 

@@ -5,10 +5,7 @@ import be.ucll.model.Profile;
 import be.ucll.model.User;
 import be.ucll.repository.*;
 import be.ucll.service.UserService;
-import be.ucll.unit.repository.MembershipRepositoryStub;
-import be.ucll.unit.repository.ProfileRepositoryStub;
-import be.ucll.unit.repository.PublicationRepositoryStub;
-import be.ucll.unit.repository.UserRepositoryStub;
+import be.ucll.unit.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +26,7 @@ public class UserServiceTest {
     @BeforeEach
     void setUp() {
         UserRepository userRepository = new UserRepositoryStub();
-        LoanRepository loanRepository = new LoanRepository();
+        LoanRepository loanRepository = new LoanRepositoryStub();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
         membershipRepository = new MembershipRepositoryStub();
         userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);
@@ -158,7 +155,7 @@ public class UserServiceTest {
             }
         };
         PublicationRepository publicationRepository = new PublicationRepositoryStub();
-        LoanRepository loanRepository = new LoanRepository();
+        LoanRepository loanRepository = new LoanRepositoryStub();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
         MembershipRepository membershipRepository = new MembershipRepositoryStub();
         userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);
@@ -177,7 +174,7 @@ public class UserServiceTest {
             }
         };
         PublicationRepository publicationRepository = new PublicationRepositoryStub();
-        LoanRepository loanRepository = new LoanRepository();
+        LoanRepository loanRepository = new LoanRepositoryStub();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
         MembershipRepository membershipRepository = new MembershipRepositoryStub();
         userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);
@@ -317,7 +314,7 @@ public class UserServiceTest {
     void givenEmptyListOfUsers_whenGettingOldest_thenThrowsRuntimeException() {
         UserRepository userRepository = new UserRepositoryStub() {};
         userRepository.deleteAll();
-        LoanRepository loanRepository = new LoanRepository();
+        LoanRepository loanRepository = new LoanRepositoryStub();
         ProfileRepository profileRepository = new ProfileRepositoryStub();
         MembershipRepository membershipRepository = new MembershipRepositoryStub();
         userService = new UserService(userRepository,loanRepository,profileRepository,membershipRepository);

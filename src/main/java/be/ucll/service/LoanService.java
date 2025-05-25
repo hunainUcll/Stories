@@ -5,6 +5,7 @@ import be.ucll.repository.LoanRepository;
 import be.ucll.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -21,23 +22,26 @@ public class LoanService {
         if (!userRepo.existsUserByEmail(email)) {
             throw new RuntimeException("User not found with given email");  // Handle if user not found basically service is to check if everything is fein
         }
-        // Fetch loans by user and filter based on active status
-        return loanRepository.findLoanByUser(email,onlyActive);
+        if (onlyActive) {
+            return loanRepository.findAllByUserEmailAndIsReturnedFalseAndEndDateAfter(email, LocalDate.now());
+        } else {
+            return loanRepository.findAllByUserEmail(email);
+        }
     }
 
     public String deleteUserLoans(String email) {
         if (!userRepo.existsUserByEmail(email)) {
             throw new RuntimeException("User does not exist");
         }
-        List<Loan> activeLoans = loanRepository.findLoanByUser(email, true);
+        List<Loan> activeLoans = loanRepository.findAllByUserEmailAndIsReturnedFalseAndEndDateAfter(email, LocalDate.now());
         if (!activeLoans.isEmpty()) {
             throw new RuntimeException("User has active loans.");
         }
-        List<Loan> allLoans = loanRepository.findLoanByUser(email, false);
+        List<Loan> allLoans = loanRepository.findAllByUserEmail(email);
         if (allLoans.isEmpty()) {
             throw new RuntimeException("User has no loans.");
         }
-         loanRepository.deleteUserLoans(email);
+         loanRepository.deleteAllByUserEmail(email);
 
         return "Loans of user successfully deleted.";
     }

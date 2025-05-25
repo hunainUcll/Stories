@@ -52,7 +52,8 @@ public class UserRestController {
     }
 
     // i donot know the use of responce entity from my research its for custom headers and returnintg different status codes and error messages
-    @GetMapping("/{email}/loans")  // http://localhost:8080/users/jane.toe@ucll.be/loans?onlyActive=true
+    // refactoring code here to better fit Story 28
+    @GetMapping("/{email}/loans")                                                                                                                   // http://localhost:8080/users/jane.toe@ucll.be/loans?onlyActive=true
     public ResponseEntity<List<Loan>> getLoansForUser(@PathVariable String email, @RequestParam(required = false) boolean onlyActive) {
         List<Loan> loans = loanService.getLoansByUser(email, onlyActive);
         if (loans.isEmpty()) {
